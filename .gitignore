@@ -1,0 +1,11 @@
+*_flymake*
+*.dSYM
+asm
+blitz
+check
+diskUtil
+dumpObj
+endian
+hexdump
+kpl
+lddd

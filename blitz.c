@@ -980,7 +980,7 @@ void checkHostCompatibility () {
   if ((i1 !=  4) ||
       (i2 != -4) ||
       (i3 != 0x80000000)) {
-    printf ("%d %d %d %d\n", i1, i2, i3);
+    printf ("%d %d %d\n", i1, i2, i3);
     fatalError ("The host implementation of double->int casting is not what I expect.");
   }
 
@@ -8314,7 +8314,7 @@ void commandAscii () {
   /* Overwrite the \n with \0 to remove it. */
   inputBuffer [strlen (inputBuffer)-1] = '\0';
   if (strlen (inputBuffer) != 1) {
-    printf ("You entered %d characters - Aborted\n", strlen (inputBuffer));
+    printf ("You entered %zu characters - Aborted\n", strlen (inputBuffer));
     return;
   }
   printHexDecimalAscii (inputBuffer[0]);

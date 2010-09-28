@@ -54,7 +54,7 @@ int within16Bits (int i) {
 //      CLASS_FIELD
 //      INT_CONST
 //
-void getIntoReg4 (AstNode * src, char * reg) {
+void getIntoReg4 (AstNode * src, const char * reg) {
   int i;
   if ((src->op == LOCAL) || (src->op == PARAMETER)) {
     i = ((VarDecl *) src)->offset;
@@ -110,7 +110,7 @@ void getIntoReg4 (AstNode * src, char * reg) {
 //      CHAR_CONST
 //      BOOL_CONST
 //
-void getIntoReg1 (AstNode * src, char * reg) {
+void getIntoReg1 (AstNode * src, const char * reg) {
   int i;
   if ((src->op == LOCAL) || (src->op == PARAMETER)) {
     i = ((VarDecl *) src)->offset;
@@ -161,7 +161,7 @@ void getIntoReg1 (AstNode * src, char * reg) {
 //      CLASS_FIELD
 //      DOUBLE_CONST
 //
-void getIntoReg8 (AstNode * src, char * freg1, char * reg2) {
+void getIntoReg8 (AstNode * src, const char * freg1, const char * reg2) {
   int i;
   DoubleConst * doubleConst;
   if ((src->op == LOCAL) || (src->op == PARAMETER)) {
@@ -208,7 +208,7 @@ void getIntoReg8 (AstNode * src, char * freg1, char * reg2) {
 //      GLOBAL
 //      CLASS_FIELD
 //
-void getAddrOfVarIntoReg (AstNode * src, char * reg1) {
+void getAddrOfVarIntoReg (AstNode * src, const char * reg1) {
   int i;
   if ((src->op == LOCAL) || (src->op == PARAMETER)) {
     i = ((VarDecl *) src)->offset;
@@ -252,7 +252,7 @@ void getAddrOfVarIntoReg (AstNode * src, char * reg1) {
 //      GLOBAL
 //      CLASS_FIELD
 //
-void storeFromReg4 (VarDecl * dest, char * reg1, char * reg2) {
+void storeFromReg4 (VarDecl * dest, const char * reg1, const char * reg2) {
   int i;
   if ((dest->op == LOCAL) || (dest->op == PARAMETER)) {
     i = dest->offset;
@@ -296,7 +296,7 @@ void storeFromReg4 (VarDecl * dest, char * reg1, char * reg2) {
 //      GLOBAL
 //      CLASS_FIELD
 //
-void storeFromReg1 (VarDecl * dest, char * reg1, char * reg2) {
+void storeFromReg1 (VarDecl * dest, const char * reg1, const char * reg2) {
   int i;
   if ((dest->op == LOCAL) || (dest->op == PARAMETER)) {
     i = dest->offset;
@@ -340,7 +340,7 @@ void storeFromReg1 (VarDecl * dest, char * reg1, char * reg2) {
 //      GLOBAL
 //      CLASS_FIELD
 //
-void storeFromReg8 (VarDecl * dest, char * freg1, char * reg2) {
+void storeFromReg8 (VarDecl * dest, const char * freg1, const char * reg2) {
   int i;
   if ((dest->op == LOCAL) || (dest->op == PARAMETER)) {
     i = dest->offset;
@@ -509,7 +509,7 @@ void Comment::print () {
   fprintf (outputFile, "! %s\n", str);
 }
 
-void IRComment (char * str) {
+void IRComment (const char * str) {
   linkIR (new Comment (str));
 }
 
@@ -521,7 +521,7 @@ void Comment3::print () {
   fprintf (outputFile, "! %s%d...\n", str, ivalue);
 }
 
-void IRComment3 (char * str, int i) {
+void IRComment3 (const char * str, int i) {
   linkIR (new Comment3 (str, i));
 }
 
@@ -541,7 +541,7 @@ void Goto::print () {
   fprintf (outputFile, "\tjmp\t%s\n", label);
 }
 
-void IRGoto (char * label) {
+void IRGoto (const char * label) {
   linkIR (new Goto (label));
 }
 
@@ -552,7 +552,7 @@ void Goto2::print () {
   fprintf (outputFile, "\tjmp\t%s\t! %d:\t%s\n", label, offset, selector);
 }
 
-void IRGoto2 (char * label, int offset, char * selector) {
+void IRGoto2 (const char * label, int offset, const char * selector) {
   linkIR (new Goto2 (label, offset, selector));
 }
 
@@ -564,7 +564,7 @@ void Label::print () {
   fprintf (outputFile, "%s:\n", label);
 }
 
-void IRLabel (char * label) {
+void IRLabel (const char * label) {
   linkIR (new Label (label));
 }
 
@@ -576,7 +576,7 @@ void Import::print () {
   fprintf (outputFile, "\t.import\t%s\n", name);
 }
 
-void IRImport (char * nam) {
+void IRImport (const char * nam) {
   linkIR (new Import (nam));
 }
 
@@ -588,7 +588,7 @@ void Export::print () {
   fprintf (outputFile, "\t.export\t%s\n", name);
 }
 
-void IRExport (char * nam) {
+void IRExport (const char * nam) {
   linkIR (new Export (nam));
 }
 
@@ -688,7 +688,7 @@ void Word2::print () {
   fprintf (outputFile, "\t.word\t%s\n", symbol);
 }
 
-void IRWord2 (char * s) {
+void IRWord2 (const char * s) {
   linkIR (new Word2 (s));
 }
 
@@ -700,7 +700,7 @@ void Word3::print () {
   fprintf (outputFile, "\t.word\t%d\t\t! %s\n", wordValue, comment);
 }
 
-void IRWord3 (int i, char * s) {
+void IRWord3 (int i, const char * s) {
   linkIR (new Word3 (i, s));
 }
 
@@ -846,7 +846,7 @@ void Call::print () {
   fprintf (outputFile, "\tcall\t%s\n", name);
 }
 
-void IRCall (char * n) {
+void IRCall (const char * n) {
   linkIR (new Call (n));
 }
 
@@ -905,7 +905,7 @@ void SetLineNumber::print () {
 
 }
 
-void IRSetLineNumber (int i, char * s) {
+void IRSetLineNumber (int i, const char * s) {
   linkIR (new SetLineNumber (i, s));
 }
 
@@ -1289,7 +1289,7 @@ void Ascii::print () {
   fprintf (outputFile, "\t.ascii\t\"%s\"\n", str);
 }
 
-void IRAscii (char * s) {
+void IRAscii (const char * s) {
   linkIR (new Ascii (s));
 }
 
@@ -1301,7 +1301,7 @@ void Ascii0::print () {
   fprintf (outputFile, "\t.ascii\t\"%s\\0\"\n", str);
 }
 
-void IRAscii0 (char * s) {
+void IRAscii0 (const char * s) {
   linkIR (new Ascii0 (s));
 }
 
@@ -1869,7 +1869,7 @@ void IntLTGoto::print () {
   fprintf (outputFile, "\tbl\t%s\n", label);
 }
 
-void IRIntLTGoto (AstNode * a1, AstNode * a2, char * lab) {
+void IRIntLTGoto (AstNode * a1, AstNode * a2, const char * lab) {
   linkIR (new IntLTGoto (a1, a2, lab));
 }
 
@@ -1911,7 +1911,7 @@ void IntGTGoto::print () {
   fprintf (outputFile, "\tbg\t%s\n", label);
 }
 
-void IRIntGTGoto (AstNode * a1, AstNode * a2, char * lab) {
+void IRIntGTGoto (AstNode * a1, AstNode * a2, const char * lab) {
   linkIR (new IntGTGoto (a1, a2, lab));
 }
 
@@ -1932,7 +1932,7 @@ void IntGEGoto::print () {
   fprintf (outputFile, "\tbge\t%s\n", label);
 }
 
-void IRIntGEGoto (AstNode * a1, AstNode * a2, char * lab) {
+void IRIntGEGoto (AstNode * a1, AstNode * a2, const char * lab) {
   linkIR (new IntGEGoto (a1, a2, lab));
 }
 
@@ -1953,7 +1953,7 @@ void IntEQGoto::print () {
   fprintf (outputFile, "\tbe\t%s\n", label);
 }
 
-void IRIntEQGoto (AstNode * a1, AstNode * a2, char * lab) {
+void IRIntEQGoto (AstNode * a1, AstNode * a2, const char * lab) {
   linkIR (new IntEQGoto (a1, a2, lab));
 }
 
@@ -2216,7 +2216,7 @@ void IntEqZero::print () {
   fprintf (outputFile, "\tbe\t%s\n", label);
 }
 
-void IRIntEqZero (AstNode * a, char * lab) {
+void IRIntEqZero (AstNode * a, const char * lab) {
   linkIR (new IntEqZero (a, lab));
 }
 
@@ -2250,7 +2250,7 @@ void IntLeZero::print () {
   fprintf (outputFile, "\tble\t%s\n", label);
 }
 
-void IRIntLeZero (AstNode * a, char * lab) {
+void IRIntLeZero (AstNode * a, const char * lab) {
   linkIR (new IntLeZero (a, lab));
 }
 
@@ -2452,7 +2452,7 @@ void Comment2::print () {
   fprintf (outputFile, "! %s%s%s\n", str1, str2, str3);
 }
 
-void IRComment2 (char * str1, char * str2, char * str3) {
+void IRComment2 (const char * str1, const char * str2, const char * str3) {
   linkIR (new Comment2 (str1, str2, str3));
 }
 

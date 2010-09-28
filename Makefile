@@ -20,6 +20,7 @@
 #    endian
 #    hexdump
 # 
+
 #########################################################################
 #
 # The following options are used when compiling for Intel-based systems.
@@ -41,11 +42,12 @@
 #   cc (GCC) 4.0.3 (Ubuntu 4.0.3-1ubuntu5), with the multi-char warnings.
 #
 CC=cc
-CFLAGS=-g -lm -DBLITZ_HOST_IS_LITTLE_ENDIAN
-CPLUSPLUS=g++
-CPLUSPLUSFLAGS=-g -DBLITZ_HOST_IS_LITTLE_ENDIAN
+CFLAGS+=-g -lm -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror
+CPLUSPLUS=g++ 
+CPLUSPLUSFLAGS+=-g -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror
 LINKFLAGS=
 #
+
 #########################################################################
 #
 # For 64-bit machines, you may need to add the "-m32" option.  This will
@@ -57,6 +59,7 @@ LINKFLAGS=
 # The "-m32" option may solve errors like the following:
 #    warning: cast from pointer to integer of different size
 #
+
 #########################################################################
 #
 # Uncomment and use the following options when compiling for Sun/Solaris:
@@ -67,6 +70,7 @@ LINKFLAGS=
 #CPLUSPLUSFLAGS=-g
 #LINKFLAGS=
 #
+
 #########################################################################
 #
 # Uncomment and use the following options for a PPC-based MAC.

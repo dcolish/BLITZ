@@ -336,9 +336,9 @@ main (int argc, char ** argv) {
     }
     if (commandOptionL) {
       printf ("  Memory addr of text segment = %08x (%d)\n",
-                                           textSegment, textSegment);
+              *textSegment, *textSegment);
       printf ("  Memory addr of data segment = %08x (%d)\n",
-                                           dataSegment, dataSegment);
+              *dataSegment, *dataSegment);
     }
 
     /* Compute the starting addresses of the segments. */
@@ -397,7 +397,7 @@ main (int argc, char ** argv) {
       targetAddr = textSegment + (inFile->textAddr - textStartAddr);
       i = fread (targetAddr, 1, inFile->sizeOfText, inFile->filePtr);
       if (commandOptionL) {
-        printf ("    memory addr = %08x (%d)\n", targetAddr, targetAddr);
+        printf ("    memory addr = %08x (%d)\n", *targetAddr, *targetAddr);
         printf ("    bytes read  = %08x (%d)\n", i, i);
       }
       if (i != inFile->sizeOfText) {
@@ -418,7 +418,7 @@ main (int argc, char ** argv) {
       targetAddr = dataSegment + (inFile->dataAddr - dataStartAddr);
       i = fread (targetAddr, 1, inFile->sizeOfData, inFile->filePtr);
       if (commandOptionL) {
-        printf ("    memory addr = %08x (%d)\n", targetAddr, targetAddr);
+        printf ("    memory addr = %08x (%d)\n", *targetAddr, *targetAddr);
         printf ("    bytes read  = %08x (%d)\n", i, i);
       }
       if (i != inFile->sizeOfData) {
@@ -809,7 +809,7 @@ void checkHostCompatibility () {
   if ((i1 !=  4) ||
       (i2 != -4) ||
       (i3 != 0x80000000)) {
-    printf ("%d %d %d %d\n", i1, i2, i3);
+    printf ("%d %d %d\n", i1, i2, i3);
     fatalError ("The host implementation of double->int casting is not what I expect.");
   }
 

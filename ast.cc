@@ -1757,7 +1757,7 @@ void ppIndent (int indent) {
 //
 // This routine indents, then prints the given string, then prints newline.
 //
-void ppLine (int indent, char * str) {
+void ppLine (int indent, const char * str) {
   ppIndent (indent);
   printf ("%s\n", str);
 }

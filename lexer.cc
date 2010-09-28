@@ -64,8 +64,8 @@
 //
 // If 'filename' is NULL, we will open stdin and return "<stdin>".
 //
-char * initScanner (char * filename) {
-  char * currentInputFileName = "<filename missing>";
+const char * initScanner (const char * filename) {
+  const char * currentInputFileName = "<filename missing>";
   currentLineOfToken = 1;
   currentCharPosOfToken = 0;
   // newlinePreceedsThisToken = 0;
@@ -505,7 +505,7 @@ int getToken (void) {
 // This routine is called to print an error message and the current line
 // number.  It returns.
 //
-void lexError (char *msg) {
+void lexError (const char *msg) {
     fprintf (stderr, "%s", inputFileNames [currentInputFileIndex]);
     if (currentLineOfToken >= 65535) {
       fprintf (stderr, ":<line number not available>: ");
@@ -622,7 +622,7 @@ void initKeywords () {
 // the table, and returns a pointer to the new String.
 // If the string is new, then its 'type' is set according to newType.
 //
-String * lookupAndAdd (char * givenStr, int newType) {
+String * lookupAndAdd (const char * givenStr, int newType) {
   return lookupAndAdd2 (givenStr, strlen(givenStr), newType);
 }
 
@@ -644,14 +644,14 @@ String * lookupAndAdd (char * givenStr, int newType) {
 // If the string is new, then its 'type' is set according to newType.
 //
 //
-String * lookupAndAdd2 (char * givenStr, int length, int newType) {
+String * lookupAndAdd2 (const char * givenStr, int length, int newType) {
   unsigned hashVal = 0, g;
   char * p, * q;
   int i;
   String * stringPtr;
 
    // Compute the hash value for the givenStr and set hashVal to it.
-  for ( p = givenStr, i=0;
+  for ( p = (char*)givenStr, i=0;
         i < length;
         p++, i++ ) {
     hashVal = (hashVal << 4) + (*p);
@@ -678,7 +678,7 @@ String * lookupAndAdd2 (char * givenStr, int length, int newType) {
   if (stringPtr == 0) {
     fatalError ("Calloc failed in lookupAndAdd!");
   }
-  for (p=givenStr, q=stringPtr->chars, i=length;
+  for (p=(char *)givenStr, q=stringPtr->chars, i=length;
        i>0;
        p++, q++, i--) {
     *q = *p;
@@ -702,7 +702,7 @@ String * lookupAndAdd2 (char * givenStr, int length, int newType) {
 // length.  It compares the two sequences of bytes and returns true iff
 // they are both equal.
 //
-int bytesEqual (char * p, char * q, int length) {
+int bytesEqual (const char * p, const char * q, int length) {
   for (; length>0; length--, p++, q++) {
     if (*p != *q) return 0;
   }
@@ -797,7 +797,7 @@ void printChar (FILE * file, int c) {
 // This routine is passed a symbol such as BOOL.  It returns a pointer
 // to a string of characters, such as "BOOL".
 //
-char * symbolName (int i) {
+const char * symbolName (int i) {
   switch (i) {
     case EOF:			return "EOF";
     case ID:			return "ID";
@@ -1507,17 +1507,17 @@ void unGetChar (char ch) {
 // 0 to 255, but 255 is used to represent problems, and will be <filename not available>.
 // The value 255 is sticky; note that MAX_INPUT_FILES = 255.
 //
-void addToInputFilenames (char * filename) {
+void addToInputFilenames (const char * filename) {
   // printf ("addToInputFilenames: %s\n", filename);
   // printf ("currentInputFileIndex, before: %d\n", currentInputFileIndex);
   if (currentInputFileIndex >= MAX_INPUT_FILES-1) {
     fprintf (stderr, "%s:0: *****  LEXICAL ERROR: Maximum number of input files (%d) exceeded\n", filename, MAX_INPUT_FILES);
     errorsDetected++;
     currentInputFileIndex = MAX_INPUT_FILES;
-    inputFileNames [currentInputFileIndex] = "<filename NOT available>";
+    inputFileNames [currentInputFileIndex] = (char *) "<filename NOT available>";
   } else {
     currentInputFileIndex++;
-    inputFileNames [currentInputFileIndex] = filename;
+    inputFileNames [currentInputFileIndex] = (char *) filename;
   }
   // printf ("currentInputFileIndex, after: %d\n", currentInputFileIndex);
 }

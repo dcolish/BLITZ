@@ -431,7 +431,7 @@ void Mapping <Key, Value> :: printKeyValue (Key * k, Value * v, int indent) {
       ppIndent (indent+4);
       printf ("TYPE_PARM ");
       printString (stdout, ((TypeParm *) value)->id);
-      printf ("[%08x]", value);
+      printf ("[%08x]", (int)value);
       printf ("\n");
       break;
     case CHAR_TYPE:
@@ -482,7 +482,7 @@ void Mapping <Key, Value> :: printKeyValue (Key * k, Value * v, int indent) {
 // printOffsetToSelector (title)
 //
 template <class Key, class Value>
-void Mapping<Key, Value> :: printOffsetToSelector (char * title) {
+void Mapping<Key, Value> :: printOffsetToSelector (const char * title) {
   int i;
   Bucket<Key, Value> * p;
   String * sel;

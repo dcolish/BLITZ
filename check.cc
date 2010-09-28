@@ -10228,7 +10228,7 @@ Type * checkMessageSend (MethodProto * methodProto,
 //
 Expression * checkAssignment (Expression * expr,
                               Type * expectedType,
-                              char * errorMsg,
+                              const char * errorMsg,
                               AssignStmt * assignStmt) {
   Type * t;
   BoolConst * falseConst;
@@ -11304,7 +11304,7 @@ Type * resolveNamedType2 (Type * type) {
 //
 void checkConcreteClass (Type * type,
                          AstNode * errorNode,
-                         char * errorMsg) {
+                         const char * errorMsg) {
   AstNode * def;
   NamedType * namedType;
   TypeArg * typeArg;
@@ -11376,7 +11376,7 @@ void checkConcreteClass (Type * type,
 //
 void checkConcreteClassOrInterface (Type * type,
                                     AstNode * errorNode,
-                                    char * errorMsg) {
+                                    const char * errorMsg) {
   AstNode * def;
   NamedType * namedType;
   TypeArg * typeArg;
@@ -11452,7 +11452,7 @@ void checkConcreteClassOrInterface (Type * type,
 //
 void checkConcreteType (Type * type,
                         AstNode * errorNode,
-                        char * errorMsg) {
+                        const char * errorMsg) {
   AstNode * def;
   NamedType * namedType;
   TypeArg * typeArg;

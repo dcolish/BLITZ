@@ -1204,7 +1204,7 @@ void checkHostCompatibility () {
   if ((i1 !=  4) ||
       (i2 != -4) ||
       (i3 != 0x80000000)) {
-    printf ("%d %d %d %d\n", i1, i2, i3);
+    printf ("%d %d %d\n", i1, i2, i3);
     fatalError ("The host implementation of double->int casting is not what I expect.");
   }
 

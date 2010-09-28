@@ -3917,7 +3917,7 @@ char * newLabel () {
 // from all previous strings returned by this function.  The "xxxx" part is
 // from the "str" argument.
 //
-char * newName (char * str) {
+char * newName (const char * str) {
   static int next = 1;
   char * p = (char *) calloc (1, strlen (str) + 12);
   if (p==0) {
@@ -4013,7 +4013,7 @@ char * newMethodName (char * sanitizedClassName, int i) {
 // It is also passed a 2 character code indicating what sort of a statement
 // this is.  Later, we'll generate an instruction to move this code into r10.
 //
-void genLineNumber (AstNode * node, char * stmtCode) {
+void genLineNumber (AstNode * node, const char * stmtCode) {
   if (node == NULL) {
     programLogicError ("node is NULL in genLineNumber");
   }

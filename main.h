@@ -83,23 +83,23 @@ class IR;
 
 void initializeConstants ();
 void printAllData ();
-void dump (char * message);
+void dump (const char * message);
 void testLexer ();
 void printToken (Token token);
-void programLogicError (char * msg);
+void programLogicError (const char * msg);
 void terminateCompiler ();
-void fatalError (char * msg);
-void syntaxError (char * msg);
-void syntaxErrorWithToken (Token token, char * msg);
-void error (AstNode * node, char * msg);
-void error2 (AstNode * node, char * msg);
-void doMessage (Token token, char * prefix, char * msg);
-void errorWithType (char * msg, Type * type);
+void fatalError (const char * msg);
+void syntaxError (const char * msg);
+void syntaxErrorWithToken (Token token, const char * msg);
+void error (AstNode * node, const char * msg);
+void error2 (AstNode * node, const char * msg);
+void doMessage (Token token, const char * prefix, const char * msg);
+void errorWithType (const char * msg, Type * type);
 void checkTokenSkipping (int count);
 void processCommandLine (int argc, char ** argv);
 void printHelp ();
 void checkHostCompatibility ();
-char * appendStrings (char * str1, char * str2, char * str3);
+char * appendStrings (const char * str1, const char * str2, const char * str3);
 void divide (int a, int b);
 int truncateToInt (double d);
 
@@ -329,18 +329,18 @@ extern char buffer [BUFF_LEN];     // Misc. use, e.g., "_Person__Constructor"
 
 //----------  Lexical Routines  ----------
 
-char * initScanner (char * filename);
+const char * initScanner (const char * filename);
 void scan ();
 int getToken (void);
-void lexError (char *msg);
+void lexError (const char *msg);
 void initKeywords ();
-String * lookupAndAdd (char * givenStr, int newType);
-String * lookupAndAdd2 (char * givenStr, int length, int newType);
-int bytesEqual (char * p, char * q, int length);
+String * lookupAndAdd (const char * givenStr, int newType);
+String * lookupAndAdd2 (const char * givenStr, int length, int newType);
+int bytesEqual (const char * p, const char * q, int length);
 void printStringTable ();
 void printString (FILE * file, String *);
 void printChar (FILE * file, int c);
-char * symbolName (int i);
+const char * symbolName (int i);
 void printSymbol (int sym);
 int hexCharToInt (char ch);
 char intToHexChar (int c);
@@ -357,7 +357,7 @@ char * extractFilename (Token token);
 void incrLineNumber ();
 int getNextChar ();
 void unGetChar (char ch);
-void addToInputFilenames (char * filename);
+void addToInputFilenames (const char * filename);
 
 
 #include "ast.h"
@@ -377,7 +377,7 @@ void printFunctions (int indent, Function * p);
 void printParmList (int indent, Parameter * parmList);
 void printTypeParms (int indent, TypeParm * parmList);
 void ppIndent (int indent);
-void ppLine (int indent, char * str);
+void ppLine (int indent, const char * str);
 
 /*****
 void printDeclList (Decl * declList, int indent);
@@ -456,10 +456,10 @@ extern String * stringThis;
 
 //----------  Parsing Routines  ----------
 
-int nextTokenIsID (char * msg);
-String * mustHaveID (char * msg);
-void mustHave (int tok, char * msg);
-int mustHaveOrScanUntilInScanSet (int tok, char * msg);
+int nextTokenIsID (const char * msg);
+String * mustHaveID (const char * msg);
+void mustHave (int tok, const char * msg);
+int mustHaveOrScanUntilInScanSet (int tok, const char * msg);
 void scanToFollowType ();
 int inScanSet ();
 int inFirstStmt ();
@@ -496,30 +496,30 @@ Interface * parseInterface ();
 TypeParm * parseTypeParms ();
 ClassDef * parseClass();
 
-Type * parseType (char * errorMsg);
+Type * parseType (const char * errorMsg);
 RecordField * parseRecordFieldList ();
 FunctionType * parseFunctionType ();
-NamedType * parseNamedType (char * errorMsg);
+NamedType * parseNamedType (const char * errorMsg);
 ArrayType * parseArrayType (Token tokenForPos);
-Expression * parseExpr (char * errorMsg);
-Expression * parseExpr0 (char * errorMsg);
-Expression * parseExpr1 (char * errorMsg);
-Expression * parseExpr2 (char * errorMsg);
-Expression * parseExpr3 (char * errorMsg);
-// Expression * parseExpr4 (char * errorMsg);
-Expression * parseExpr5 (char * errorMsg);
-Expression * parseExpr6 (char * errorMsg);
-Expression * parseExpr7 (char * errorMsg);
-Expression * parseExpr8 (char * errorMsg);
-Expression * parseExpr9 (char * errorMsg);
-Expression * parseExpr10 (char * errorMsg);
-Expression * parseExpr11 (char * errorMsg);
-Expression * parseExpr12 (char * errorMsg);
-Expression * parseExpr13 (char * errorMsg);
-Expression * parseExpr14 (char * errorMsg);
-Expression * parseExpr15 (char * errorMsg);
-Expression * parseExpr16 (char * errorMsg);
-Expression * parseExpr17 (char * errorMsg);
+Expression * parseExpr (const char * errorMsg);
+Expression * parseExpr0 (const char * errorMsg);
+Expression * parseExpr1 (const char * errorMsg);
+Expression * parseExpr2 (const char * errorMsg);
+Expression * parseExpr3 (const char * errorMsg);
+// Expression * parseExpr4 (const char * errorMsg);
+Expression * parseExpr5 (const char * errorMsg);
+Expression * parseExpr6 (const char * errorMsg);
+Expression * parseExpr7 (const char * errorMsg);
+Expression * parseExpr8 (const char * errorMsg);
+Expression * parseExpr9 (const char * errorMsg);
+Expression * parseExpr10 (const char * errorMsg);
+Expression * parseExpr11 (const char * errorMsg);
+Expression * parseExpr12 (const char * errorMsg);
+Expression * parseExpr13 (const char * errorMsg);
+Expression * parseExpr14 (const char * errorMsg);
+Expression * parseExpr15 (const char * errorMsg);
+Expression * parseExpr16 (const char * errorMsg);
+Expression * parseExpr17 (const char * errorMsg);
 ArrayAccess * parseArrayAccess (Token tokenForPos, Expression * soFar);
 Argument * parseArgList ();
 Constructor * parseConstructor ();
@@ -535,19 +535,19 @@ TypeDef * parseTypeDefs ();
 //----------  Routines in printAst.cc  ----------
 
 void printAst (int indent, AstNode *t);
-void printHeader (int indent, char * str, AstNode * p);
+void printHeader (int indent, const char * str, AstNode * p);
 void printFooter (int indent);
 void printIndent (int indent);
-void printLine (int indent, char * str);
-void printPtrField (int indent, char * str, AstNode * id);
-void printIntField (int indent, char * str, int i);
-void printBoolField (int indent, char * str, int i);
-void printStringField (int indent, char * str1, String * str2);
-void printSymbolField (int indent, char * str, int sym);
-void printCharPtrField (int indent, char * str, char * charPtr);
+void printLine (int indent, const char * str);
+void printPtrField (int indent, const char * str, AstNode * id);
+void printIntField (int indent, const char * str, int i);
+void printBoolField (int indent, const char * str, int i);
+void printStringField (int indent, const char * str1, String * str2);
+void printSymbolField (int indent, const char * str, int sym);
+void printCharPtrField (int indent, const char * str, char * charPtr);
 void printId (int indent, String * id);
-void printFieldName (int indent, char * str);
-void printItem (int indent, char * s, AstNode * t);
+void printFieldName (int indent, const char * str);
+void printItem (int indent, const char * s, AstNode * t);
 void printOperator (int indent, int op);
 int printPtr (AstNode * p);
 void fpretty (Type * p);
@@ -565,7 +565,7 @@ template <class Key, class Value> class Mapping {
     Value * getFirst ();                          // Used to iterate through
     Value * getNext ();                           //     all values in top scope
     Key *   getItsKey ();                         //     Return key of last value
-    void    printOffsetToSelector (char * title); // Used for "offsetToSelector" maps
+    void    printOffsetToSelector (const char * title); // Used for "offsetToSelector" maps
     void    printSelectorToOffset ();             // Used for "selectorToOffset" maps
     Mapping (int initSize, Mapping * superMap);   // Zero is OK; NULL is OK
     ~Mapping ();
@@ -740,7 +740,7 @@ Type * checkMessageSend (MethodProto * methodProto,
                          Mapping<TypeParm,Type> * subst);
 Expression * checkAssignment (Expression * expr,
                               Type * expectedType,
-                              char * msg,
+                              const char * msg,
                               AssignStmt * assignStmt);
 Expression * insertIntToDouble (Expression * expr);
 Expression * insertIntIsZero (Expression * expr);
@@ -776,13 +776,13 @@ Type * resolveNamedType (Type * type);
 Type * resolveNamedType2 (Type * type);
 void checkConcreteClass (Type * type,
                          AstNode * errorNode,
-                         char * errorMsg);
+                         const char * errorMsg);
 void checkConcreteClassOrInterface (Type * type,
                                     AstNode * errorNode,
-                                    char * errorMsg);
+                                    const char * errorMsg);
 void checkConcreteType (Type * type,
                         AstNode * errorNode,
-                        char * errorMsg);
+                        const char * errorMsg);
 int isLValue (Expression * expr);
 void updateMaxArgBytes (int i);
 //----------
@@ -823,13 +823,13 @@ AbstractStack * newStack ();
 #include "ir.h"
 
 int within16Bits (int);
-void getIntoReg4 (AstNode * src, char * reg);
-void getIntoReg1 (AstNode * src, char * reg1, char * reg2);
-void getIntoReg8 (AstNode * src, char * freg1, char * reg2);
-void getAddrOfVarIntoReg (AstNode * src, char * reg1);
-void storeFromReg4 (VarDecl * dest, char * reg1, char * reg2);
-void storeFromReg1 (VarDecl * dest, char * reg1, char * reg2);
-void storeFromReg8 (VarDecl * dest, char * freg1, char * reg2);
+void getIntoReg4 (AstNode * src, const char * reg);
+void getIntoReg1 (AstNode * src, const char * reg1, const char * reg2);
+void getIntoReg8 (AstNode * src, const char * freg1, const char * reg2);
+void getAddrOfVarIntoReg (AstNode * src, const char * reg1);
+void storeFromReg4 (VarDecl * dest, const char * reg1, const char * reg2);
+void storeFromReg1 (VarDecl * dest, const char * reg1, const char * reg2);
+void storeFromReg8 (VarDecl * dest, const char * freg1, const char * reg2);
 void printIR ();
 void printANode (AstNode * node);
 
@@ -879,10 +879,10 @@ void genExprInto (VarDecl * target,
 VarDecl * genAddressOf (Expression * node);
 VarDecl * genConstructor (Constructor * constructor, VarDecl * target);
 char * newLabel ();
-char * newName (char * str);
+char * newName (const char * str);
 char * sanitizedPackageName (String * packageName);
 char * newMethodName (char * sanitizedClassName, int i);
-void genLineNumber (AstNode * node, char * stmtCode);
+void genLineNumber (AstNode * node, const char * stmtCode);
 Local * newTemp (int size);
 
 //qqqqq

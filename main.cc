@@ -324,7 +324,7 @@ main (int argc, char ** argv) {
   }
 
   // Parse the main header file...
-  fileName = initScanner (headerFileName);
+  fileName = (char *)initScanner (headerFileName);
   if (fileName != NULL) {
 //    mainHeader = parseHeader (commandPackageName);
     mainHeader = parseHeader ();
@@ -361,7 +361,7 @@ main (int argc, char ** argv) {
         fileName [len] = '.';
         fileName [len+1] = 'h';
         fileName [len+2] = '\0';
-        fileName = initScanner (fileName);
+        fileName = (char *)initScanner (fileName);
         if (fileName != NULL) {
         
           // Parse the new package...
@@ -790,7 +790,7 @@ void printAllData () {
 //
 // This routine prints out various data structures, using "prettyPrinting".
 //
-void dump (char * message) {
+void dump (const char * message) {
   Header * hdr;
 
   fflush (stdout);
@@ -911,7 +911,7 @@ void printToken (Token token) {
 //
 // This routine prints the message and terminates the compiler.
 //
-void programLogicError (char * msg) {
+void programLogicError (const char * msg) {
   fprintf (stderr,
 "********************************************************************\n"
 "*****\n"
@@ -967,7 +967,7 @@ void terminateCompiler () {
 // This routine is called to print an error message and the current line
 // number of the curent token.  It aborts the compiler.
 //
-void fatalError (char *msg) {
+void fatalError (const char *msg) {
   errorsDetected++;
   doMessage (token, "*****  FATAL ERROR", msg);
   terminateCompiler ();
@@ -981,7 +981,7 @@ void fatalError (char *msg) {
 // does not terminate the program after printing.  The "node" parameter
 // is used to print additional information about the position of the error.
 //
-void error (AstNode * node, char * msg) {
+void error (AstNode * node, const char * msg) {
   errorsDetected++;
   doMessage (node->tokn, "*****  ERROR", msg);
 }
@@ -996,7 +996,7 @@ void error (AstNode * node, char * msg) {
 // It differs from "error()" in that it does not print "*****  ERRROR"; it is
 // used to print additional info after the initial error message.
 //
-void error2 (AstNode * node, char * msg) {
+void error2 (AstNode * node, const char * msg) {
   // errorsDetected++;
   doMessage (node->tokn, "            ", msg);
 }
@@ -1012,7 +1012,7 @@ void error2 (AstNode * node, char * msg) {
 // It uses the current token to print additional information about the
 // position of the error.
 //
-void syntaxError (char * msg) {
+void syntaxError (const char * msg) {
   syntaxErrorWithToken (token, msg);
 }
 
@@ -1023,7 +1023,7 @@ void syntaxError (char * msg) {
 // This routine is called to do the work of printing a syntax error message,
 // position on 'tok'.
 //
-void syntaxErrorWithToken (Token tok, char * msg) {
+void syntaxErrorWithToken (Token tok, const char * msg) {
   // If the last message was on this token, then suppress this message.
   if (tok.tokenPos != tokenPosOfLastError) {
     errorsDetected++;
@@ -1038,7 +1038,7 @@ void syntaxErrorWithToken (Token tok, char * msg) {
 //
 // Print info about the current token and the given "msg".
 //
-void doMessage (Token tok, char * prefix, char * msg) {
+void doMessage (Token tok, const char * prefix, const char * msg) {
   fprintf (stderr, "%s:%d: %s at ",
                      extractFilename (tok),
                      extractLineNumber (tok),
@@ -1098,7 +1098,7 @@ void doMessage (Token tok, char * prefix, char * msg) {
 // This routine calls "resolveNamedType" so it prints out the underlying
 // type, getting rid of aliases.
 //
-void errorWithType (char * msg, Type * type) {
+void errorWithType (const char * msg, Type * type) {
   Token tok;
   if (type == NULL) {
     tok.tokenPos = 0;
@@ -1479,7 +1479,7 @@ void checkHostCompatibility () {
   if ((i1 !=  4) ||
       (i2 != -4) ||
       (i3 != 0x80000000)) {
-    printf ("%d %d %d %d\n", i1, i2, i3);
+    printf ("%d %d %d\n", i1, i2, i3);
     fatalError ("The host implementation of double->int casting is not what I expect.");
   }
 
@@ -1491,18 +1491,18 @@ void checkHostCompatibility () {
 // Allocate and a new char array and fill it in from the
 // characters in the strings.  Return a pointer to it.
 //
-char * appendStrings (char * str1, char * str2, char * str3) {
+char * appendStrings (const char * str1, const char * str2, const char * str3) {
   int len = strlen (str1) + strlen (str2) + strlen (str3);
   char * newStr, * to, * from ;
   newStr = (char *) calloc (1, len+1);
   to = newStr;
-  for (from=str1; *from != 0; to++, from++) {
+  for (from=(char *)str1; *from != 0; to++, from++) {
     *to = *from;
   }
-  for (from=str2; *from != 0; to++, from++) {
+  for (from=(char *)str2; *from != 0; to++, from++) {
     *to = *from;
   }
-  for (from=str3; *from != 0; to++, from++) {
+  for (from=(char *)str3; *from != 0; to++, from++) {
     *to = *from;
   }
   *to = 0;

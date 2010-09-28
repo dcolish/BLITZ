@@ -29,7 +29,7 @@
 // or false.  If not, it also prints a message.  If an ID happens to occur
 // in the next couple of tokens, it advances to it and returns true.
 //
-int nextTokenIsID (char * msg) {
+int nextTokenIsID (const char * msg) {
   if (token.type == ID) {
     return 1;
   } else {
@@ -60,7 +60,7 @@ int nextTokenIsID (char * msg) {
 // prints the message.  In any case, it returns a valid String.  It
 // may scan zero tokens, if there is an error.
 //
-String * mustHaveID (char * msg) {
+String * mustHaveID (const char * msg) {
   String * retVal;
   if (nextTokenIsID (msg)) {
     retVal = token.value.svalue;
@@ -81,7 +81,7 @@ String * mustHaveID (char * msg) {
 // THIS ROUTINE MAY NOT SCAN ANY TOKENS!!!  Therefore, the caller MUST ensure that
 // the parser will scan at least one token in any loop calling this routine.
 //
-void mustHave (int tok, char * msg) {
+void mustHave (int tok, const char * msg) {
   if (token.type == tok) {
     scan ();
   } else {
@@ -2350,7 +2350,7 @@ ClassDef * parseClass () {
 //
 // If syntax errors occur, IT MAY SCAN ZERO TOKENS.
 //
-Type * parseType (char * errorMsg) {
+Type * parseType (const char * errorMsg) {
   Type * type;
   PtrType * ptrType;
   RecordType * recordType;
@@ -2579,7 +2579,7 @@ FunctionType * parseFunctionType () {
 //    ID [ '[' Type { , Type } ']' ]
 // and returns a NamedType.  It may scan zero tokens, if there are errors.
 //
-NamedType * parseNamedType (char * errorMsg) {
+NamedType * parseNamedType (const char * errorMsg) {
   TypeArg * typeArg, * last;
   NamedType * namedType;
   namedType = new NamedType ();
@@ -2701,7 +2701,7 @@ ArrayType * parseArrayType (Token tokenForPos) {
 // This routine never returns NULL, even if there are parsing errors.
 // This routine may scan ZERO tokens.
 //
-Expression * parseExpr (char * errorMsg) {
+Expression * parseExpr (const char * errorMsg) {
 
   // If the current token is wrong, try just skipping it.
   if (!inFirstExpr (token) && inFirstExpr (token2)) {
@@ -2751,7 +2751,7 @@ Expression * parseExpr (char * errorMsg) {
 //         y: T = (a at: b)
 //         z: T = c
 //
-Expression * parseExpr0 (char * errorMsg) {
+Expression * parseExpr0 (const char * errorMsg) {
 
   // If the current token is wrong, try just skipping it.
   if (!inFirstExpr (token) && inFirstExpr (token2)) {
@@ -2774,7 +2774,7 @@ Expression * parseExpr0 (char * errorMsg) {
 // This routine builds up a string such as "at:put:" and (by calling "lookupAndAdd")
 // enters it in the string table as an ID.
 //
-Expression * parseExpr1 (char * errorMsg) {
+Expression * parseExpr1 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg, * lastArg;
@@ -2816,7 +2816,7 @@ Expression * parseExpr1 (char * errorMsg) {
 // This routine parses the grammar rule:
 //    Expr2  -->  Expr3 { OPERATOR Expr3 }            // SendExpr (INFIX)
 //
-Expression * parseExpr2 (char * errorMsg) {
+Expression * parseExpr2 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -2866,7 +2866,7 @@ Expression * parseExpr2 (char * errorMsg) {
 // This routine parses the grammar rule:
 //    Expr3  -->  Expr5 { '||' Expr5 }        // SendExpr (INFIX)
 //
-Expression * parseExpr3 (char * errorMsg) {
+Expression * parseExpr3 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -2898,7 +2898,7 @@ Expression * parseExpr3 (char * errorMsg) {
 // This routine parses the grammar rule:
 //    Expr5  -->  Expr6 { '&&' Expr6 }           // SendExpr (INFIX)
 //
-Expression * parseExpr5 (char * errorMsg) {
+Expression * parseExpr5 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -2930,7 +2930,7 @@ Expression * parseExpr5 (char * errorMsg) {
 // This routine parses the grammar rule:
 //    Expr6  -->  Expr7 { '|' Expr7 }           // SendExpr (INFIX)
 //
-Expression * parseExpr6 (char * errorMsg) {
+Expression * parseExpr6 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -2962,7 +2962,7 @@ Expression * parseExpr6 (char * errorMsg) {
 // This routine parses the grammar rule:
 //    Expr7  -->  Expr8 { '^' Expr8 }           // SendExpr (INFIX)
 //
-Expression * parseExpr7 (char * errorMsg) {
+Expression * parseExpr7 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -2994,7 +2994,7 @@ Expression * parseExpr7 (char * errorMsg) {
 // This routine parses the grammar rule:
 //    Expr8  -->  Expr9 { '&' Expr9 }           // SendExpr (INFIX)
 //
-Expression * parseExpr8 (char * errorMsg) {
+Expression * parseExpr8 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -3029,7 +3029,7 @@ Expression * parseExpr8 (char * errorMsg) {
 //                           '!=' Expr10            // SendExpr (INFIX)
 //                                       }
 //
-Expression * parseExpr9 (char * errorMsg) {
+Expression * parseExpr9 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -3067,7 +3067,7 @@ Expression * parseExpr9 (char * errorMsg) {
 //                           '>=' Expr11            // SendExpr (INFIX)
 //                                       }
 //
-Expression * parseExpr10 (char * errorMsg) {
+Expression * parseExpr10 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -3106,7 +3106,7 @@ Expression * parseExpr10 (char * errorMsg) {
 //                           '>>>' Expr12            // SendExpr (INFIX)
 //                                       }
 //
-Expression * parseExpr11 (char * errorMsg) {
+Expression * parseExpr11 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -3143,7 +3143,7 @@ Expression * parseExpr11 (char * errorMsg) {
 //                           '-' Expr13            // SendExpr (INFIX)
 //                                       }
 //
-Expression * parseExpr12 (char * errorMsg) {
+Expression * parseExpr12 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -3225,7 +3225,7 @@ Expression * parseExpr12 (char * errorMsg) {
 //         bbbbbb *
 //         cccccc
 //
-Expression * parseExpr13 (char * errorMsg) {
+Expression * parseExpr13 (const char * errorMsg) {
   Expression * a;
   SendExpr * sendExpr;
   Argument * arg;
@@ -3263,7 +3263,7 @@ Expression * parseExpr13 (char * errorMsg) {
 //    Expr15  -->  OPERATOR Expr15       // PREFIX
 //            -->  Expr16
 //
-Expression * parseExpr15 (char * errorMsg) {
+Expression * parseExpr15 (const char * errorMsg) {
   SendExpr * prefix;
 
   switch (token.type) {
@@ -3295,7 +3295,7 @@ Expression * parseExpr15 (char * errorMsg) {
 //                        | '[' Expr { ',' Expr } ']'     // ArrayAccess
 //                       }
 //
-Expression * parseExpr16 (char * errorMsg) {
+Expression * parseExpr16 (const char * errorMsg) {
   Expression * a;
   Expression * newExpr;
   AsIntegerExpr * asIntegerExpr;
@@ -3449,7 +3449,7 @@ Expression * parseExpr16 (char * errorMsg) {
 //            c
 //         )
 //   
-Expression * parseExpr17 (char * errorMsg) {
+Expression * parseExpr17 (const char * errorMsg) {
   IntConst * e1;
   DoubleConst * e2;
   CharConst * e3;

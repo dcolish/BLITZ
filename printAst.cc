@@ -940,7 +940,7 @@ void printAst (int indent, AstNode *p) {
 // This routine indents, then prints a label, then prints str, and then prints
 // the p->pos. Finally, a newline is printed.
 //
-void printHeader (int indent, char * str, AstNode * p) {
+void printHeader (int indent, const char * str, AstNode * p) {
   int i = printPtr (p);
   printf (": ");
   i = indent - i - TABAMT;
@@ -1003,7 +1003,7 @@ void printIndent (int indent) {
 //
 // This routine indents, then prints the given string, then prints newline.
 //
-void printLine (int indent, char * str) {
+void printLine (int indent, const char * str) {
   printIndent (indent);
   printf ("%s\n", str);
 }
@@ -1015,7 +1015,7 @@ void printLine (int indent, char * str) {
 // This routine indents by "indent" + TABAMT, then prints str, then prints
 // the p argument as a pointer, then prints newline.
 //
-void printPtrField (int indent, char * str, AstNode * p) {
+void printPtrField (int indent, const char * str, AstNode * p) {
   printIndent (indent+TABAMT);
   printf ("%s ", str);
   printPtr (p);
@@ -1029,7 +1029,7 @@ void printPtrField (int indent, char * str, AstNode * p) {
 // This routine indents by "indent" + TABAMT, then prints str, then prints
 // the integer i, then prints newline.
 //
-void printIntField (int indent, char * str, int i) {
+void printIntField (int indent, const char * str, int i) {
   printIndent (indent+TABAMT);
   printf ("%s %d\n", str, i);
 }
@@ -1041,7 +1041,7 @@ void printIntField (int indent, char * str, int i) {
 // This routine indents by "indent" + TABAMT, then prints str, then prints
 // the integer i (as TRUE or FALSE), then prints newline.
 //
-void printBoolField (int indent, char * str, int i) {
+void printBoolField (int indent, const char * str, int i) {
   printIndent (indent+TABAMT);
   if (i == 0) {
     printf ("%s FALSE\n", str);
@@ -1060,7 +1060,7 @@ void printBoolField (int indent, char * str, int i) {
 // This routine indents by "indent" + TABAMT, then prints str1, then prints
 // str2, then prints newline.
 //
-void printStringField (int indent, char * str1, String * str2) {
+void printStringField (int indent, const char * str1, String * str2) {
   printIndent (indent+TABAMT);
   if (str2 == NULL) {
     printf ("%s NULL\n", str1);
@@ -1078,7 +1078,7 @@ void printStringField (int indent, char * str1, String * str2) {
 // This routine indents by "indent" + TABAMT, then prints str, then prints
 // sym, then prints newline.
 //
-void printSymbolField (int indent, char * str, int sym) {
+void printSymbolField (int indent, const char * str, int sym) {
   printIndent (indent+TABAMT);
   if (sym == 0) {
     printf ("%s NULL\n", str);
@@ -1094,7 +1094,7 @@ void printSymbolField (int indent, char * str, int sym) {
 // This routine indents by "indent" + TABAMT, then prints str, then prints
 // charPtr, then prints newline.
 //
-void printCharPtrField (int indent, char * str, char * charPtr) {
+void printCharPtrField (int indent, const char * str, char * charPtr) {
   printIndent (indent+TABAMT);
   if (charPtr == NULL) {
     printf ("%s NULL\n", str);
@@ -1121,7 +1121,7 @@ void printId (int indent, String * id) {
 // This routine indents by "indent" + TABAMT, then prints the given string.  It
 // prints no newLine.
 //
-void printFieldName (int indent, char * str) {
+void printFieldName (int indent, const char * str) {
   printIndent (indent+TABAMT);
   printf ("%s ", str);
 }
@@ -1134,7 +1134,7 @@ void printFieldName (int indent, char * str) {
 // than "indent") and then calls printAst() to print the tree "t" (indented by
 // 2*TABAMT more spaces than "indent").
 //
-void printItem (int indent, char * str, AstNode * t) {
+void printItem (int indent, const char * str, AstNode * t) {
   printIndent (indent+TABAMT);
   printf ("%s", str);
   if (t == NULL) {

@@ -1973,7 +1973,7 @@ void printString (TableEntry * tableEntryPtr) {
 String * newString (char * charPtr) {
     String * str;
     str = (String *) calloc (1, strlen (charPtr) + sizeof (String) + 1);
-    printf ("size allocated = %d\n", strlen (charPtr) + sizeof (String));
+    printf ("size allocated = %lu\n", strlen (charPtr) + sizeof (String));
     str->length = strlen (charPtr);
     strcpy (str->string, charPtr);  /* copies all characters plus \0. */
     return str;
@@ -4492,7 +4492,7 @@ void checkHostCompatibility () {
     if ((i1 !=  4) ||
         (i2 != -4) ||
         (i3 != 0x80000000)) {
-        printf ("%d %d %d %d\n", i1, i2, i3);
+        printf ("%d %d %d\n", i1, i2, i3);
         fprintf (stderr, "The host implementation of double->int casting is not what I expect.\n");
         errorExit ();
     }

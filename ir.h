@@ -171,14 +171,14 @@ class IR {
 
 //----------  Comment  ----------
 
-void IRComment (char * str);
+void IRComment (const char * str);
 
 class Comment : public IR {
   public:
     char * str;
 
-    Comment (char * s) : IR (OPComment) {
-      str = s;
+    Comment (const char * s) : IR (OPComment) {
+        str = (char *) s;
     }
     ~Comment () {}
     virtual void print ();
@@ -188,15 +188,15 @@ class Comment : public IR {
 
 //----------  Comment3  ----------
 
-void IRComment3 (char * str, int i);
+void IRComment3 (const char * str, int i);
 
 class Comment3 : public IR {
   public:
     char * str;
     int ivalue;
 
-    Comment3 (char * s, int i) : IR (OPComment3) {
-      str = s;
+    Comment3 (const char * s, int i) : IR (OPComment3) {
+        str = (char *)s;
       ivalue = i;
     }
     ~Comment3 () {}
@@ -207,14 +207,14 @@ class Comment3 : public IR {
 
 //----------  Goto  ----------
 
-void IRGoto (char * lab);
+void IRGoto (const char * lab);
 
 class Goto : public IR {
   public:
     char * label;
 
-    Goto (char * lab) : IR (OPGoto) {
-      label = lab;
+    Goto (const char * lab) : IR (OPGoto) {
+        label = (char *)lab;
     }
     ~Goto () {}
     virtual void print ();
@@ -224,7 +224,7 @@ class Goto : public IR {
 
 //----------  Goto2  ----------
 
-void IRGoto2 (char * lab, int offset, char * selector);
+void IRGoto2 (const char * lab, int offset, const char * selector);
 
 class Goto2 : public IR {
   public:
@@ -232,10 +232,10 @@ class Goto2 : public IR {
     int    offset;
     char * selector;
 
-    Goto2 (char * lab, int i, char * sel) : IR (OPGoto2) {
-      label = lab;
+    Goto2 (const char * lab, int i, const char * sel) : IR (OPGoto2) {
+        label = (char *)lab;
       offset = i;
-      selector = sel;
+      selector = (char *)sel;
     }
     ~Goto2 () {}
     virtual void print ();
@@ -245,14 +245,14 @@ class Goto2 : public IR {
 
 //----------  Label  ----------
 
-void IRLabel (char * lab);
+void IRLabel (const char * lab);
 
 class Label : public IR {
   public:
     char * label;
 
-    Label (char * lab) : IR (OPLabel) {
-      label = lab;
+    Label (const char * lab) : IR (OPLabel) {
+        label = (char *)lab;
     }
     ~Label () {}
     virtual void print ();
@@ -262,14 +262,14 @@ class Label : public IR {
 
 //----------  Import  ----------
 
-void IRImport (char * nam);
+void IRImport (const char * nam);
 
 class Import : public IR {
   public:
     char * name;
 
-    Import (char * nam) : IR (OPImport) {
-      name = nam;
+    Import (const char * nam) : IR (OPImport) {
+        name = (char *)nam;
     }
     ~Import () {}
     virtual void print ();
@@ -279,14 +279,14 @@ class Import : public IR {
 
 //----------  Export  ----------
 
-void IRExport (char * nam);
+void IRExport (const char * nam);
 
 class Export : public IR {
   public:
     char * name;
 
-    Export (char * nam) : IR (OPExport) {
-      name = nam;
+    Export (const char * nam) : IR (OPExport) {
+        name = (char *) nam;
     }
     ~Export () {}
     virtual void print ();
@@ -392,14 +392,14 @@ class Word : public IR {
 
 //----------  Word2  ----------
 
-void IRWord2 (char * s);
+void IRWord2 (const char * s);
 
 class Word2 : public IR {
   public:
     char * symbol;
 
-    Word2 (char * s) : IR (OPWord2) {
-      symbol = s;
+    Word2 (const char * s) : IR (OPWord2) {
+        symbol = (char *)s;
     }
     ~Word2 () {}
     virtual void print ();
@@ -409,16 +409,16 @@ class Word2 : public IR {
 
 //----------  Word3  ----------
 
-void IRWord3 (int i, char * s);
+void IRWord3 (int i, const char * s);
 
 class Word3 : public IR {
   public:
     int    wordValue;
     char * comment;
 
-    Word3 (int i, char * s) : IR (OPWord3) {
+    Word3 (int i, const char * s) : IR (OPWord3) {
       wordValue = i;
-      comment = s;
+      comment = (char *)s;
     }
     ~Word3 () {}
     virtual void print ();
@@ -544,14 +544,14 @@ class Double : public IR {
 
 //----------  Call  ----------
 
-void IRCall (char * n);
+void IRCall (const char * n);
 
 class Call : public IR {
   public:
     char * name;
 
-    Call (char * n) : IR (OPCall) {
-      name = n;
+    Call (const char * n) : IR (OPCall) {
+        name = (char *)n;
     }
     ~Call () {}
     virtual void print ();
@@ -608,16 +608,16 @@ class Halt : public IR {
 
 //----------  SetLineNumber  ----------
 
-void IRSetLineNumber (int i, char * s);
+void IRSetLineNumber (int i, const char * s);
 
 class SetLineNumber : public IR {
   public:
     int lineNumber;
     char * stmtCode;
 
-    SetLineNumber (int i, char * s) : IR (OPSetLineNumber) {
+    SetLineNumber (int i, const char * s) : IR (OPSetLineNumber) {
       lineNumber = i;
-      stmtCode = s;
+      stmtCode = (char *)s;
     }
     ~SetLineNumber () {}
     virtual void print ();
@@ -891,14 +891,14 @@ class Assign8 : public IR {
 
 //----------  Ascii  ----------
 
-void IRAscii (char * s);
+void IRAscii (const char * s);
 
 class Ascii : public IR {
   public:
     char * str;
 
-    Ascii (char * s) : IR (OPAscii) {
-      str = s;
+    Ascii (const char * s) : IR (OPAscii) {
+        str = (char *)s;
     }
     ~Ascii () {}
     virtual void print ();
@@ -908,14 +908,14 @@ class Ascii : public IR {
 
 //----------  Ascii0  ----------
 
-void IRAscii0 (char * s);
+void IRAscii0 (const char * s);
 
 class Ascii0 : public IR {
   public:
     char * str;
 
-    Ascii0 (char * s) : IR (OPAscii0) {
-      str = s;
+    Ascii0 (const char * s) : IR (OPAscii0) {
+        str = (char *)s;
     }
     ~Ascii0 () {}
     virtual void print ();
@@ -1441,7 +1441,7 @@ class NegZero : public IR {
 
 //----------  IntLTGoto  ----------
 
-void IRIntLTGoto (AstNode * a1, AstNode * a2, char * lab);
+void IRIntLTGoto (AstNode * a1, AstNode * a2, const char * lab);
 
 class IntLTGoto : public IR {
   public:
@@ -1449,10 +1449,10 @@ class IntLTGoto : public IR {
     AstNode * arg2;           // Local, Global, Parm, IntConst
     char * label;
 
-    IntLTGoto (AstNode * a1, AstNode * a2, char * lab) : IR (OPIntLTGoto) {
+    IntLTGoto (AstNode * a1, AstNode * a2, const char * lab) : IR (OPIntLTGoto) {
       arg1 = a1;
       arg2 = a2;
-      label = lab;
+      label = (char *)lab;
     }
     ~IntLTGoto () {}
     virtual void print ();
@@ -1483,7 +1483,7 @@ class IntLEGoto : public IR {
 
 //----------  IntGTGoto  ----------
 
-void IRIntGTGoto (AstNode * a1, AstNode * a2, char * lab);
+void IRIntGTGoto (AstNode * a1, AstNode * a2, const char * lab);
 
 class IntGTGoto : public IR {
   public:
@@ -1491,10 +1491,10 @@ class IntGTGoto : public IR {
     AstNode * arg2;           // Local, Global, Parm, IntConst
     char * label;
 
-    IntGTGoto (AstNode * a1, AstNode * a2, char * lab) : IR (OPIntGTGoto) {
+    IntGTGoto (AstNode * a1, AstNode * a2, const char * lab) : IR (OPIntGTGoto) {
       arg1 = a1;
       arg2 = a2;
-      label = lab;
+      label = (char *)lab;
     }
     ~IntGTGoto () {}
     virtual void print ();
@@ -1504,7 +1504,7 @@ class IntGTGoto : public IR {
 
 //----------  IntGEGoto  ----------
 
-void IRIntGEGoto (AstNode * a1, AstNode * a2, char * lab);
+void IRIntGEGoto (AstNode * a1, AstNode * a2, const char * lab);
 
 class IntGEGoto : public IR {
   public:
@@ -1512,10 +1512,10 @@ class IntGEGoto : public IR {
     AstNode * arg2;           // Local, Global, Parm, IntConst
     char * label;
 
-    IntGEGoto (AstNode * a1, AstNode * a2, char * lab) : IR (OPIntGEGoto) {
+    IntGEGoto (AstNode * a1, AstNode * a2, const char * lab) : IR (OPIntGEGoto) {
       arg1 = a1;
       arg2 = a2;
-      label = lab;
+      label = (char *)lab;
     }
     ~IntGEGoto () {}
     virtual void print ();
@@ -1525,7 +1525,7 @@ class IntGEGoto : public IR {
 
 //----------  IntEQGoto  ----------
 
-void IRIntEQGoto (AstNode * a1, AstNode * a2, char * lab);
+void IRIntEQGoto (AstNode * a1, AstNode * a2, const char * lab);
 
 class IntEQGoto : public IR {
   public:
@@ -1533,10 +1533,10 @@ class IntEQGoto : public IR {
     AstNode * arg2;           // Local, Global, Parm, IntConst
     char * label;
 
-    IntEQGoto (AstNode * a1, AstNode * a2, char * lab) : IR (OPIntEQGoto) {
+    IntEQGoto (AstNode * a1, AstNode * a2, const char * lab) : IR (OPIntEQGoto) {
       arg1 = a1;
       arg2 = a2;
-      label = lab;
+      label = (char *) lab;
     }
     ~IntEQGoto () {}
     virtual void print ();
@@ -1794,16 +1794,16 @@ class BNot : public IR {
 
 //----------  IntEqZero  ----------
 
-void IRIntEqZero (AstNode * a, char * lab);
+void IRIntEqZero (AstNode * a, const char * lab);
 
 class IntEqZero : public IR {
   public:
     AstNode * arg;           // Local, Global, Parm, ClassField, IntConst
     char * label;
 
-    IntEqZero (AstNode * a, char * lab) : IR (OPIntEqZero) {
+    IntEqZero (AstNode * a, const char * lab) : IR (OPIntEqZero) {
       arg = a;
-      label = lab;
+      label = (char *)lab;
     }
     ~IntEqZero () {}
     virtual void print ();
@@ -1832,16 +1832,16 @@ class IntNeZero : public IR {
 
 //----------  IntLeZero  ----------
 
-void IRIntLeZero (AstNode * a, char * lab);
+void IRIntLeZero (AstNode * a, const char * lab);
 
 class IntLeZero : public IR {
   public:
     AstNode * arg;           // Local, Global, Parm, ClassField, IntConst
     char * label;
 
-    IntLeZero (AstNode * a, char * lab) : IR (OPIntLeZero) {
+    IntLeZero (AstNode * a, const char * lab) : IR (OPIntLeZero) {
       arg = a;
-      label = lab;
+      label = (char *)lab;
     }
     ~IntLeZero () {}
     virtual void print ();
@@ -1929,7 +1929,7 @@ class ReturnResult : public IR {
 
 //----------  Comment2  ----------
 
-void IRComment2 (char * str1, char * str2, char * str3);
+void IRComment2 (const char * str1, const char * str2, const char * str3);
 
 class Comment2 : public IR {
   public:
@@ -1937,10 +1937,10 @@ class Comment2 : public IR {
     char * str2;
     char * str3;
 
-    Comment2 (char * s1, char * s2, char * s3) : IR (OPComment2) {
-      str1 = s1;
-      str2 = s2;
-      str3 = s3;
+    Comment2 (const char * s1, const char * s2, const char * s3) : IR (OPComment2) {
+        str1 = (char *)s1;
+        str2 = (char *)s2;
+        str3 = (char *)s3;
     }
     ~Comment2 () {}
     virtual void print ();
