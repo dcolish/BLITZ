@@ -1973,7 +1973,7 @@ void printString (TableEntry * tableEntryPtr) {
 String * newString (char * charPtr) {
     String * str;
     str = (String *) calloc (1, strlen (charPtr) + sizeof (String) + 1);
-    printf ("size allocated = %lu\n", strlen (charPtr) + sizeof (String));
+    printf ("size allocated = %zu\n", strlen (charPtr) + sizeof (String));
     str->length = strlen (charPtr);
     strcpy (str->string, charPtr);  /* copies all characters plus \0. */
     return str;

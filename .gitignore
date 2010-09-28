@@ -1,5 +1,6 @@
 *_flymake*
 *.dSYM
+*.o
 asm
 blitz
 check
