@@ -4976,7 +4976,7 @@ AstNode * evalExprsIn (AstNode * node) {
             r = ((DoubleConst *) callExpr->argList->expr)->rvalue;
             intConst = new IntConst ();
             intConst->positionAt (node);
-            intConst->ivalue = truncateToInt (r);
+            intConst->ivalue = (int) (r);
             changed = 1;
             return intConst;
           }

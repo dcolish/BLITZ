@@ -802,8 +802,6 @@ Statement * parseStmt (Statement * enclosingStmtForBreak,
   ThrowStmt * throwStmt;
   FreeStmt * freeStmt;
   DebugStmt * debugStmt;
-  Function * fun;
-  Method * meth;
   CallStmt * callStmt;
   SendStmt * sendStmt;
   AssignStmt * assignStmt;
@@ -3297,7 +3295,6 @@ Expression * parseExpr15 (const char * errorMsg) {
 //
 Expression * parseExpr16 (const char * errorMsg) {
   Expression * a;
-  Expression * newExpr;
   AsIntegerExpr * asIntegerExpr;
   ArraySizeExpr * arraySizeExpr;
   IsInstanceOfExpr * isInstanceOfExpr;
@@ -4223,7 +4220,7 @@ ConstDecl * parseConstDecls () {
 ConstDecl * parseEnums () {
   ConstDecl * first, * last, * constDecl;
   int counter, gotInitializer;
-  Expression * expr, * junk;
+  Expression * junk;
   IntConst * intConst;
   SendExpr * sendExpr;
   Argument * arg;

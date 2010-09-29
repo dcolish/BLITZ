@@ -42,9 +42,9 @@
 #   cc (GCC) 4.0.3 (Ubuntu 4.0.3-1ubuntu5), with the multi-char warnings.
 #
 CC=cc
-CFLAGS+=-g -lm -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror
-CPLUSPLUS=g++ 
-CPLUSPLUSFLAGS+=-g -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror
+CFLAGS+=-g -lm -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror -Wall
+CPLUSPLUS=g++
+CPLUSPLUSFLAGS+=-g -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror -Wall
 LINKFLAGS=
 #
 

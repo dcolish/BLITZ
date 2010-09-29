@@ -18,7 +18,7 @@
 int i;
 char * p;
 
-main () {
+int main () {
   printf ("*******************************\nThis program tests whether it is running on an architecture with Big Endian or Little Endian byte ordering...\n");
   i = 0x12345678;
   printf ("The following line should print 0x12345678...\n");
@@ -36,4 +36,6 @@ main () {
   printf ("Little Endian machines will print 0x44332211 next...\n");
   printf ("        0x%08x\n", i);
   printf ("*******************************\n");
+  
+  return 0;
 }

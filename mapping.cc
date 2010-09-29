@@ -278,12 +278,7 @@ int Mapping<Key, Value> :: alreadyDefined (Key * k) {
 //
 template <class Key, class Value>
 void Mapping<Key, Value> :: print (int indent) {
-  int i;
   Bucket<Key, Value> * p;
-  String * str;
-  IntConst * val;
-  Key * key;
-  Value * value;
   ppIndent (indent);
   printf ("==========  Mapping  ==========\n");
 
@@ -483,12 +478,10 @@ void Mapping <Key, Value> :: printKeyValue (Key * k, Value * v, int indent) {
 //
 template <class Key, class Value>
 void Mapping<Key, Value> :: printOffsetToSelector (const char * title) {
-  int i;
   Bucket<Key, Value> * p;
   String * sel;
   Offset * off;
-  Key * key;
-  Value * value;
+
   printf ("        %s\n", title);
   // Print using the insertion order...
   for (p=firstInsertedBucket; p; p = p->nextForIterator) {
@@ -520,12 +513,10 @@ void Mapping<Key, Value> :: printOffsetToSelector (const char * title) {
 //
 template <class Key, class Value>
 void Mapping<Key, Value> :: printSelectorToOffset () {
-  int i;
   Bucket<Key, Value> * p;
   String * sel;
   Offset * off;
-  Key * key;
-  Value * value;
+
   printf ("        SELECTOR-TO-OFFSET:\n");
   // Print using the insertion order...
   for (p=firstInsertedBucket; p; p = p->nextForIterator) {
@@ -806,7 +797,6 @@ int Mapping<Key, Value> :: arrayIndex (Key * k) {
 void testMapping () {
   Mapping<String, Offset> * testMap2;
   Mapping<Offset, String> * testMap3;
-  int i;
   Offset * off;
 
   String * s1 = lookupAndAdd ("string 1", ID);
