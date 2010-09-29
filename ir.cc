@@ -83,7 +83,7 @@ void getIntoReg4 (AstNode * src, const char * reg) {
     i = ((IntConst *) src)->ivalue;
     if (within16Bits (i)) {
       fprintf (outputFile, "\tmov\t%d,%s\n", i, reg);
-    } else if (i == 0x80000000) {
+    } else if (i == (int) 0x80000000) {
       fprintf (outputFile, "\tset\t0x80000000,%s\n", reg);
     } else {
       fprintf (outputFile, "\tset\t%d,%s\n", i, reg);
@@ -534,7 +534,7 @@ void Goto::print () {
   if (next && next->op == OPLabel) {
     lab = (Label *) this->next;
     if (lab->label == label) {
-      fprintf (outputFile, "!", label);   // Comment the jump out
+      fprintf (outputFile, "!%s", label);   // Comment the jump out
     }
   }
   // Else generate a "jmp" instruction...
@@ -2278,7 +2278,6 @@ void IRBoolEqZeroIndirect (VarDecl * a, char * lab) {
 
 void PrepareArg::print () {
   char * label;
-  int i;
   fprintf (outputFile, "!   Prepare Argument: offset=%d  value=", offset);
   printANode (tempName);
   fprintf (outputFile, "  sizeInBytes=%d\n", sizeInBytes);
@@ -2348,7 +2347,6 @@ void IRPrepareArg (int off, AstNode * tname, int size) {
 
 void RetrieveResult::print () {
   char * label;
-  int i;
 
   fprintf (outputFile, "!   Retrieve Result: targetName=");
   printANode (targetName);
@@ -2399,7 +2397,6 @@ void IRRetrieveResult (VarDecl * tname, int size) {
 
 void ReturnResult::print () {
   char * label;
-  int i;
 
   fprintf (outputFile, "!   ReturnResult: ");
   printANode (tempName);
@@ -2463,7 +2460,7 @@ void IRComment2 (const char * str1, const char * str2, const char * str3) {
 void Set::print () {
   if (within16Bits (initValue)) {
     fprintf (outputFile, "\tmov\t%d,r1\n", initValue);
-  } else if (initValue == 0x80000000) {
+  } else if (initValue == (int) 0x80000000) {
     fprintf (outputFile, "\tset\t0x80000000,r1\n");
   } else {
     fprintf (outputFile, "\tset\t%d,r1\n", initValue);
@@ -2523,7 +2520,7 @@ void IRLoadSelfPtr (VarDecl * tname) {
 
 void Move::print () {
   char * label;
-  int i;
+
   fprintf (outputFile, "!   Data Move: ");
   if (targetVar) {
     printANode (targetVar);
@@ -2683,7 +2680,7 @@ void IRMove (VarDecl * tarV, VarDecl * tarP, AstNode * srcV, VarDecl * srcP, int
 
 void DynamicObjectMove::print () {
   char * label;
-  int i;
+
   fprintf (outputFile, "!   Dynamic Object Move: *");
   printANode (targetPtr);
   fprintf (outputFile, " = *");
@@ -2788,7 +2785,7 @@ void IRCheckDPT2 (VarDecl * v, ClassDef * cl) {
 
 void CopyArrays::print () {
   char * label;
-  int i;
+
   fprintf (outputFile, "!   Dynamic Array Copy: *");
   printANode (targetPtr);
   fprintf (outputFile, " = *");
@@ -3177,7 +3174,7 @@ void SwitchDirect::print () {
   // Make sure the expr is not < lowValue...
   fprintf (outputFile, "!   If ");
   printANode (expr);
-  fprintf (outputFile, " is < %d (==smallestCaseValue) goto default code\n", lowValue, highValue);
+  fprintf (outputFile, " is < %d (==smallestCaseValue) goto default code\n", lowValue);//, highValue);
   fprintf (outputFile, "\tcmp\tr1,%d\n", lowValue);
   // (Overflow cannot occur since r1 and lowValue are both within -32768..32767.)
   fprintf (outputFile, "\tbl\t%s\n", defaultLabel);
@@ -3597,7 +3594,7 @@ void IRIsInstanceOf (VarDecl * target, VarDecl * temp, char * descLab, char * fa
 
 void ZeroMemory::print () {
   char * label;
-  int i;
+
   fprintf (outputFile, "!   ZeroMemory: ");
   if (targetVar) {
     printANode (targetVar);

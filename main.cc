@@ -202,7 +202,6 @@ int main (int argc, char ** argv) {
   errorsDetected = 0;
   tokenPosOfLastError = -1;  // FF=255, LLLL=65535, PP=255
   initKeywords ();
-  checkHostCompatibility ();
 
   // Debugging: test the "Mapping" class...
   // testMapping ();

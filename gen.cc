@@ -427,9 +427,6 @@ void genClass (ClassDef * cl) {
   char * lab, * classNamePtr;
   Offset * offset;
   String * sel;
-  TypeArg * typeArg;
-  NamedType * namedType;
-  Interface * otherInter;
   Mapping<Abstract, Abstract > * setOfSupers
                = new Mapping<Abstract, Abstract > (10, NULL);
   Abstract * otherAbs;
@@ -589,9 +586,7 @@ void addAllSupers (Abstract * abs, Mapping <Abstract, Abstract> * setOfSupers) {
 //
 void genMethOrFunction (MethOrFunction * methOrFunction) {
   Local * local;
-  AstNode * x;
   char * methOrFunName, * labelForSelf;
-  char kind;
   Parameter * parm;
   char * nameOfNamelessFunction;
   Function * fun;
@@ -1164,7 +1159,6 @@ void genAssignStmt (AssignStmt * assignStmt) {
   Expression * lvalue;
   VariableExpr * var;
   VarDecl * varDecl, * varDecl2;
-  Expression * arg1, * arg2;
 
   // Look at the L-Value...
   lvalue = assignStmt->lvalue;
@@ -1328,9 +1322,9 @@ void genCallExpr (VarDecl * target,
                   char * trueLabel,
                   char * falseLabel) {
   FunctionProto * funProto;
-  VarDecl * resultVar, * varDecl;
-  Expression * arg1, * arg2;
-  AstNode * x, * y;
+  VarDecl * varDecl;
+  Expression * arg1;
+  AstNode * x;
   char * lab1, * lab2;
   Argument * arg;
   Parameter * parm;
@@ -1568,7 +1562,7 @@ void genSendExpr (VarDecl * target,
                   char * trueLabel,
                   char * falseLabel) {
   MethodProto * methProto;
-  VarDecl * resultVar, * tempVar, * ptr1, * ptr2;
+  VarDecl * tempVar, * ptr1, * ptr2;
   Expression * arg1, * arg2;
   AstNode * x, * y;
   Local * temp;
@@ -2795,7 +2789,7 @@ int roundUpToPrime (int i) {
   if (i <= 30011) return 30011;
 
   programLogicError ("IMPLEMENTATION RESTRICTION: More than 30,000 cases encountered in some switch statement");
-
+  return 0;
 }
 
 
@@ -2933,9 +2927,6 @@ void genFreeStmt (FreeStmt * freeStmt) {
 // the node itself.
 //
 AstNode * genExpr (Expression * node, int targetSize) {
-    StringConst * stringConst;
-    NullConst * nullConst;
-    CallExpr * callExpr;
     VariableExpr * var;
     VarDecl * varDecl;
     Local * temp;
@@ -3057,10 +3048,6 @@ void genExprInto (VarDecl * target,
                   char * trueLabel,
                   char * falseLabel) {
     BoolConst * boolConst;
-    CallExpr * callExpr;
-    SendExpr * sendExpr;
-    SelfExpr * selfExpr;
-    SuperExpr * superExpr;
     FieldAccess * fieldAccess;
     ArrayAccess * arrayAccess;
     Constructor * constructor;
@@ -3071,7 +3058,6 @@ void genExprInto (VarDecl * target,
     ArraySizeExpr * arraySizeExpr;
     IsInstanceOfExpr * isInstanceOfExpr;
     IsKindOfExpr * isKindOfExpr;
-    SizeOfExpr * sizeOfExpr;
     DynamicCheck * dynamicCheck;
     FunctionProto * funProto;
     VarDecl * varDecl, * tempVar, * temp;
@@ -3413,9 +3399,6 @@ VarDecl * genAddressOf (Expression * node) {
     ArrayAccess * arrayAccess;
     DynamicCheck * dynamicCheck;
     Constructor * constructor;
-    int i, n;
-    CountValue * countValue;
-    IntConst * intConst;
 
   if (node==NULL) {
     programLogicError ("genAddressOf called with node == NULL");
@@ -3895,6 +3878,7 @@ VarDecl * genConstructor (Constructor * constructor, VarDecl * target) {
     default:
       printf ("\nconstructor->allocKind = %s\n", symbolName (constructor->allocKind));
       programLogicError ("Unexpected allocKind in genConstructor");
+      return 0;
   }
 }
 
