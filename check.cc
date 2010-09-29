@@ -180,7 +180,6 @@ void buildPackageMapping (Header * hdr) {
   Renaming * ren;
   AstNode * val;
   String * key, * newStr;
-  String * strKey, * strVal;
   Behavior * behav;
   Mapping<String,AstNode> * tempMapping;
   Method * meth;
@@ -891,8 +890,6 @@ void bindTypeNames (AstNode * node,
   FieldInit * fieldInit;
   AstNode * def;
   Mapping <String, AstNode> * newMap;
-  Type * t1, * t2;
-  // Mapping <TypeParm, Type> * testingMap;
 
   if (node == NULL) return;
 
@@ -1555,7 +1552,11 @@ Type * findCoreType (Type * typ) {
       t = new VoidType ();
       t->positionAt (typ);
       return t;
+  default:
+    programLogicError ("In findCoreType, typ->op is of unknown type");
+    return NULL;
   }
+
 }
 
 
@@ -1983,12 +1984,10 @@ void inheritFields (Header * hdr) {
 //
 void inheritMethodProtos (Header * hdr) {
   ClassDef * cl;
-  MethodProto * proto, * newProto, * nextProto;
-  AstNode * def, * def2;
+  AstNode * def;
   Method * meth;
-  String * newSelector, * strKey, * strVal;
-
-  TypeArg * typeArg;
+  MethodProto * proto, * newProto;
+  String * newSelector;
 
   for (cl = hdr->classes; cl; cl = cl->next) {
 
@@ -2372,7 +2371,7 @@ void bindVarNames (AstNode * node,
   Catch * cat;
   Global * global;
   Local * local;
-  Parameter * parm, * protoParm, * funParm;
+  Parameter * parm;
   ClassField * classField;
   RecordField * recordField;
   CallExpr * callExpr;
@@ -2393,7 +2392,6 @@ void bindVarNames (AstNode * node,
   FieldInit * fieldInit;
   AstNode * def;
   Mapping <String, AstNode> * newMap;
-  Type * t1, * t2;
 
   if (node == NULL) return;
 
@@ -3148,12 +3146,10 @@ void assignOffsetsAndEvalExprs (Header * hdr) {
 //
 void assignOffsets2 (AstNode * node, int wantPrinting) {
     Header * header;
-    Code * code;
     Uses * uses;
     Renaming * renaming;
     Interface * interface;
     ClassDef * cl;
-    Behavior * behavior;
     TypeDef * typeDef;
     ConstDecl * constDecl;
     ErrorDecl * errorDecl;
@@ -4232,6 +4228,7 @@ AstNode * getTypeDef (Type * type) {
     default:
       printf ("\ndef->op = %s\n", symbolName (def->op));
       programLogicError ("Unexpected op in getTypeDef");
+      return 0;
   }
 }
 
@@ -4466,12 +4463,10 @@ int sizeInBytesOfWhole (Type * type, AstNode * errNode, int wantPrinting) {
 // 
 AstNode * evalExprsIn (AstNode * node) {
     Header * header;
-    Code * code;
     Uses * uses;
     Renaming * renaming;
     Interface * interface;
     ClassDef * cl;
-    Behavior * behavior;
     TypeDef * typeDef;
     ConstDecl * constDecl;
     ErrorDecl * errorDecl;
@@ -5116,6 +5111,7 @@ AstNode * evalExprsIn (AstNode * node) {
               // Check for not-a-number; if result is +inf or -inf it will be okay
               if (isnan (doubleConst->rvalue)) {
                 error (node, "During the compile-time evaluation of this double subtraction operation, the result was not-a-number");
+
               }
               linkDouble (doubleConst);
               changed = 1;
@@ -5132,7 +5128,7 @@ AstNode * evalExprsIn (AstNode * node) {
               intConst = new IntConst ();
               intConst->positionAt (node);
               // Check for overflow...
-              if (i == 0x80000000) {
+              if (i == (int) 0x80000000) {
                 error (node,
                   "Overflow detected during compile-time evaluation of -(0x80000000)");
                 changed = 1;
@@ -5202,7 +5198,7 @@ AstNode * evalExprsIn (AstNode * node) {
               if (j == 0) {
                 error (node, "During the compile-time evaluation of this integer division operation, the divisor was found to be zero");
               }
-              if (i == 0x80000000 && j == -1) {
+              if (i == (int) 0x80000000 && j == -1) {
                 error (node, "During the compile-time evaluation of this integer division operation, overflow occurred");
               }
               divide (i, j);
@@ -5241,7 +5237,7 @@ AstNode * evalExprsIn (AstNode * node) {
               if (j == 0) {
                 error (node, "During the compile-time evaluation of this integer remainder operation, the divisor was found to be zero");
               }
-              if (i == 0x80000000 && j == -1) {
+              if (i == (int) 0x80000000 && j == -1) {
                 error (node, "During the compile-time evaluation of this integer remainder operation, overflow occurred");
               }
               divide (i, j);
@@ -5714,6 +5710,7 @@ AstNode * evalExprsIn (AstNode * node) {
     default:
       printf ("node->op = %s\n", symbolName (node->op));
       programLogicError ("Unkown op in evalExprsIn");
+      return 0;
   }
 }
 
@@ -5892,12 +5889,9 @@ int typesEqual (Type * t1, Type * t2) {
   TypeArg * typeArg1, * typeArg2;
   TypeDef * typeDef;
   NamedType * namedType1, * namedType2;
-  ClassDef * classDef1;
-  Interface * interface1;
   RecordType * rec1, * rec2;
   RecordField * rf1, *rf2;
   FunctionType * fType1, * fType2;
-  TypeParm * typeParm, * typeParm2;
   int equal;
   IntConst * intCon1, * intCon2;
 
@@ -6118,8 +6112,8 @@ int typesEqual (Type * t1, Type * t2) {
       printf ("t1->op = %s\n", symbolName (t1->op));
       printf ("t2->op = %s\n", symbolName (t2->op));
       programLogicError ("Unknown op in typesEqual");
+      return 0;
   }
-
 }
 
 
@@ -6158,7 +6152,6 @@ int isSubType (Type * t1, Type * t2) {
   RecordType * rec1, * rec2;
   RecordField * rf1, *rf2;
   FunctionType * fType1, * fType2;
-  TypeParm * typeParm, * typeParm2;
   AstNode * def1, * def2;
   Mapping<TypeParm,Type> * subst;
   int sub;
@@ -6490,8 +6483,8 @@ int isSubType (Type * t1, Type * t2) {
       printf ("t1->op = %s\n", symbolName (t1->op));
       printf ("t2->op = %s\n", symbolName (t2->op));
       programLogicError ("Unknown op in isSubType");
+      return 0;
   }
-
 }
 
 
@@ -6508,11 +6501,8 @@ int assignable (Type * t1, Type * t2) {
   TypeArg * typeArg1, * typeArg2;
   TypeDef * typeDef;
   NamedType * namedType1, * namedType2;
-  ClassDef * classDef1;
-  Interface * interface1;
   RecordType * rec1, * rec2;
   RecordField * rf1, *rf2;
-  FunctionType * fType1, * fType2;
   AstNode * def1, * def2;
   int sub, equal;
   IntConst * intCon1, * intCon2;
@@ -6700,8 +6690,8 @@ int assignable (Type * t1, Type * t2) {
       printf ("t1->op = %s\n", symbolName (t1->op));
       printf ("t2->op = %s\n", symbolName (t2->op));
       programLogicError ("Unknown op in assignable");
+      return 0;
   }
-
 }
 
 
@@ -6866,7 +6856,7 @@ void checkMethodProtos (Header * hdr) {
   ClassDef * cl;
   Method * meth;
   MethodProto * proto, * protoSuper, * protoSub;
-  Parameter * methParm, * protoParm, * subParm;
+  Parameter * methParm, * protoParm;
   String * superSelector;
 
   // Run through all classes...
@@ -7210,12 +7200,10 @@ void checkExtends (Header * hdr) {
 //
 Type * checkTypes (AstNode * node) {
     Header * header;
-    Code * code;
     Uses * uses;
     Renaming * renaming;
     Interface * interface;
     ClassDef * cl;
-    Behavior * behavior;
     TypeDef * typeDef;
     ConstDecl * constDecl;
     ErrorDecl * errorDecl;
@@ -7225,13 +7213,6 @@ Type * checkTypes (AstNode * node) {
     Method * meth;
     TypeParm * typeParm;
     TypeArg * typeArg, * typeArgList, * nextTypeArg;
-    CharType * charType;
-    IntType * intType;
-    DoubleType * doubleType;
-    BoolType * boolType;
-    VoidType * voidType;
-    TypeOfNullType * typeOfNullType;
-    AnyType * anyType;
     PtrType * pType;
     ArrayType * aType;
     RecordType * rType;
@@ -7262,7 +7243,6 @@ Type * checkTypes (AstNode * node) {
     CallExpr * callExpr;
     SendExpr * sendExpr;
     SelfExpr * selfExpr;
-    SuperExpr * superExpr;
     FieldAccess * fieldAccess;
     ArrayAccess * arrayAccess;
     Constructor * constructor;
@@ -7282,7 +7262,7 @@ Type * checkTypes (AstNode * node) {
     VarDecl * varDecl;
     String * nameWithoutSuper, * newSelector;
     AstNode * def;
-    int recvrIsSuper, count, i, looksLikeDeref, numberOfCases;
+    int recvrIsSuper, i, looksLikeDeref, numberOfCases;
     Mapping <String, AstNode> * tempMap;
     Parameter * protoParm, * subParm, * funParm;
     int arSize, j;
@@ -9125,8 +9105,10 @@ a catch stmt; we just keep going and hit other stuff in the list.
 
       printf ("\nnode->op = %s\n", symbolName (node->op));
       programLogicError ("Unkown op in checkTypes");
+      return 0;
   }
   programLogicError ("All cases should contain returns in checkTypes");
+  return 0;
 }
 
 
@@ -9706,7 +9688,7 @@ Type * checkForPrimitive (SendExpr * sendExpr,
                           Type * recvrType,
                           int PRIMITIVE_I_OP,
                           int PRIMITIVE_D_OP) {
-  Type * t2, * resultType;
+  Type * t2;
 
   if (argCount (sendExpr->argList) == 1) {
     t2 = checkTypes (sendExpr->argList->expr);
@@ -9777,7 +9759,7 @@ Type * checkForPrimitive (SendExpr * sendExpr,
 Type * checkForPrimitive2 (SendExpr * sendExpr,
                           Type * recvrType,
                           int PRIMITIVE_I_OP) {
-  Type * t2, * resultType;
+  Type * t2;
 
   if (argCount (sendExpr->argList) == 1) {
     t2 = checkTypes (sendExpr->argList->expr);
@@ -9833,7 +9815,7 @@ Type * checkForPrimitive3 (SendExpr * sendExpr,
                           Type * recvrType,
                           int PRIMITIVE_I_OP,
                           int PRIMITIVE_D_OP) {
-  Type * t2, * resultType;
+  Type * t2;
 
   if (argCount (sendExpr->argList) == 1) {
     t2 = checkTypes (sendExpr->argList->expr);
@@ -9929,7 +9911,7 @@ Type * checkForPrimitive3 (SendExpr * sendExpr,
 Type * checkForPrimitive4 (SendExpr * sendExpr,
                           Type * recvrType,
                           int PRIMITIVE_B_OP) {
-  Type * t2, * resultType;
+  Type * t2;
 
   if (argCount (sendExpr->argList) == 1) {
     t2 = checkTypes (sendExpr->argList->expr);
@@ -9988,9 +9970,7 @@ Type * checkForPrimitive5 (SendExpr * sendExpr,
                           int PRIMITIVE_D_OP,
                           int PRIMITIVE_B_OP,
                           int PRIMITIVE_OBJ_OP) {
-  Type * t2, * resultType, * t1;
-  ClassDef * cl1, * cl2;
-  AstNode * def1, * def2;
+  Type * t2;
 
   if (argCount (sendExpr->argList) == 1) {
     t2 = checkTypes (sendExpr->argList->expr);
@@ -11236,6 +11216,7 @@ Type * resolveNamedType (Type * type) {
     default:
       printf ("\ndef->op = %s\n", symbolName (def->op));
       programLogicError ("Unexpected myDef->op in resolveNamedType");
+      return 0;
   }
 }
 
@@ -11272,7 +11253,7 @@ Type * resolveNamedType2 (Type * type) {
     default:
       printf ("\ndef->op = %s\n", symbolName (def->op));
       programLogicError ("Unexpected myDef->op in resolveNamedType2");
-
+      return 0;
   }
 }
 
@@ -11571,12 +11552,10 @@ void updateMaxArgBytes (int i) {
 //
 int fallsThru (AstNode * node) {
     Header * header;
-    Code * code;
     Uses * uses;
     Renaming * renaming;
     Interface * interface;
     ClassDef * cl;
-    Behavior * behavior;
     TypeDef * typeDef;
     ConstDecl * constDecl;
     ErrorDecl * errorDecl;
@@ -11586,13 +11565,6 @@ int fallsThru (AstNode * node) {
     Method * meth;
     TypeParm * typeParm;
     TypeArg * typeArg;
-    CharType * charType;
-    IntType * intType;
-    DoubleType * doubleType;
-    BoolType * boolType;
-    VoidType * voidType;
-    TypeOfNullType * typeOfNullType;
-    AnyType * anyType;
     PtrType * pType;
     ArrayType * aType;
     RecordType * rType;
@@ -11604,8 +11576,6 @@ int fallsThru (AstNode * node) {
     SendStmt * sendStmt;
     WhileStmt * whileStmt;
     DoStmt * doStmt;
-    BreakStmt * breakStmt;
-    ContinueStmt * continueStmt;
     ReturnStmt * returnStmt;
     ForStmt * forStmt;
     SwitchStmt * switchStmt;
@@ -11620,21 +11590,11 @@ int fallsThru (AstNode * node) {
     Parameter * parm;
     ClassField * classField;
     RecordField * recordField;
-    IntConst * intConst;
-    DoubleConst * doubleConst;
-    CharConst * charConst;
-    StringConst * stringConst;
-    BoolConst * boolConst;
-    NullConst * nullConst;
     CallExpr * callExpr;
     SendExpr * sendExpr;
-    SelfExpr * selfExpr;
-    SuperExpr * superExpr;
     FieldAccess * fieldAccess;
     ArrayAccess * arrayAccess;
     Constructor * constructor;
-    ClosureExpr * closureExpr;
-    VariableExpr * var;
     AsPtrToExpr * asPtrToExpr;
     AsIntegerExpr * asIntegerExpr;
     ArraySizeExpr * arraySizeExpr;
@@ -11667,20 +11627,7 @@ int fallsThru (AstNode * node) {
       fallsThru (header->closures);
       fallsThru (header->interfaces);
       fallsThru (header->classes);
-      // fallsThru (header->next);
       return 0;
-
-//    case CODE:
-//      code = (Code *) node;
-//      fallsThru (code->consts);
-//      fallsThru (code->errors);
-//      fallsThru (code->globals);
-//      fallsThru (code->typeDefs);
-//      fallsThru (code->functions);
-//      fallsThru (code->interfaces);
-//      fallsThru (code->classes);
-//      fallsThru (code->behaviors);
-//      return 0;
 
     case USES:
       uses = (Uses *) node;
@@ -11704,7 +11651,6 @@ int fallsThru (AstNode * node) {
 
     case CLASS_DEF:
       cl = (ClassDef *) node;
-      // printf ("  %s\n", cl->id->chars);
       fallsThru (cl->typeParms);
       fallsThru (cl->implements);
       fallsThru (cl->superclass);
@@ -11713,13 +11659,6 @@ int fallsThru (AstNode * node) {
       fallsThru (cl->methods);
       fallsThru (cl->next);
       return 0;
-
-//    case BEHAVIOR:
-//      behavior = (Behavior *) node;
-//      printf ("  %s\n", behavior->id->chars);
-//      fallsThru (behavior->methods);
-//      fallsThru (behavior->next);
-//      return 0;
 
     case TYPE_DEF:
       typeDef = (TypeDef *) node;
@@ -12119,6 +12058,7 @@ int fallsThru (AstNode * node) {
     default:
       printf ("node->op = %s\n", symbolName (node->op));
       programLogicError ("Unkown op in fallsThru");
+      return 0;
   }
 }
 
@@ -12206,7 +12146,7 @@ void assignLocalOffsets (Header * hdr) {
 // This routine assigns offsets to the Locals in this method or function.
 //
 void assignOffsetsInMethOrFunction (MethOrFunction * methOrFunction) {
-  int lastOffset, padding, incr;
+  int lastOffset, padding;
   Local * local;
   Function * fun;
   Method * meth;
@@ -12419,13 +12359,12 @@ void printParmOffsets (Parameter * parmList) {
 void assignDispatchTableOffsets (Header * hdr) {
   Interface * inter;
   ClassDef * cl;
-  Abstract * absList, * abs, * nextAbs, * subAbs, * other;
+  Abstract * absList, * abs, * nextAbs, * other;
   Offset * offset, * prevOff;
   AbstractStack * st;
-  String * sel, * otherSel;
+  String * sel;
   MethodProto * methProto;
   Mapping<Abstract,Abstract> * relatedSet, * affectedSet;
-  int okay;
   MethodProto * methProto2;
 
   // Initialize the Dispatch Table offset list...

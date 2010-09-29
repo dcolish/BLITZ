@@ -1128,7 +1128,6 @@ void IntConst::prettyPrint (int indent) {
 //----------  DoubleConst  ----------
 
 void DoubleConst::prettyPrint (int indent) {
-  int * p;
   double r = 0.0;
 
   if (rvalue == (-1.0) / r) {

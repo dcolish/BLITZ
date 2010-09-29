@@ -655,7 +655,7 @@ String * lookupAndAdd2 (const char * givenStr, int length, int newType) {
         i < length;
         p++, i++ ) {
     hashVal = (hashVal << 4) + (*p);
-    if (g = hashVal & 0xf0000000) {
+    if ((g = hashVal) & 0xf0000000) {
       hashVal = hashVal ^ (g >> 24);
       hashVal = hashVal ^ g;
     }
@@ -1312,7 +1312,7 @@ int isOpChar (char ch) {
 //
 // This routine is passed an integer.  It adds it into the running "hashVal".
 // The "hashVal" is initialized before each file is processed.  Every token is used to
-// modify this value (by calling this routine) so that, after completely processing a file,\
+// modify this value (by calling this routine) so that, after completely processing a file,
 // the resulting "hashVal" will be a psuedo-random number, dependent on exactly what tokens
 // were in the file and what order they were in.
 //

@@ -168,8 +168,8 @@ Class * currentClass;
 //
 // The compiler main.
 //
-main (int argc, char ** argv) {
-  Expression * expr;
+int main (int argc, char ** argv) {
+//Expression * expr;
   Header * hdr, * newHeader;
   Uses * uses;
   String * newPackName;
@@ -1371,6 +1371,7 @@ void printHelp () {
 // expected.  If this is not the case, then truncateToInt() will need to
 // be changed.
 //
+/*
 void checkHostCompatibility () {
   union fourBytes {
     char chars [4];
@@ -1484,7 +1485,7 @@ void checkHostCompatibility () {
   }
 
 }
-
+*/
 
 // appendStrings (char *, char *, char *)
 //
