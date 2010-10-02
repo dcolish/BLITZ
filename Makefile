@@ -44,16 +44,19 @@
 #
 
 CC=cc
-CFLAGS+=-g -lm -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror -Wall
 CXX=g++
-CXXFLAGS+=-g -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Wall
+COMMONFLAGS= -g -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror -Wall
+CFLAGS+= -lm $(COMMONFLAGS)
+CXXFLAGS+= $(COMMONFLAGS)
 
-.SUFFIX: .o .cc .c
+OBJ=$(patsubst %.cc, %.o, $(shell echo *.cc))
 
 all: asm dumpObj lddd blitz diskUtil hexdump check endian kpl
 
-kpl:	main.o lexer.o ast.o printAst.o parser.o mapping.o kplcheck.o ir.o gen.o
+kpl: $(OBJ)
 	$(CXX) $(CXXFLAGS) $+ -o $@
 
 clean: 
 	rm -rf *.o *.dSYM asm dumpObj lddd blitz diskUtil hexdump check endian kpl
+
+.SUFFIXES: .o .cc .c
