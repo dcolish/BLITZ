@@ -48,15 +48,15 @@ CXX=g++
 COMMONFLAGS= -g -DBLITZ_HOST_IS_LITTLE_ENDIAN -m32 -Werror -Wall
 CFLAGS+= -lm $(COMMONFLAGS)
 CXXFLAGS+= $(COMMONFLAGS)
-
+SRCS=$(shell echo *.c | sed 's/\.c*//g')
 OBJ=$(patsubst %.cc, %.o, $(shell echo *.cc))
 
-all: asm dumpObj lddd blitz diskUtil hexdump check endian kpl
+all: $(SRCS) kpl
 
 kpl: $(OBJ)
 	$(CXX) $(CXXFLAGS) $+ -o $@
 
 clean: 
-	rm -rf *.o *.dSYM asm dumpObj lddd blitz diskUtil hexdump check endian kpl
+	rm -rf *.o *.dSYM $(SRCS) kpl
 
 .SUFFIXES: .o .cc .c
