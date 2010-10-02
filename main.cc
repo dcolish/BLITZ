@@ -138,38 +138,11 @@ BoolConst * constantFalse;
 BoolConst * constantTrue;
 
 
-/*****
-
-DoubleExpr * constantDoubleZero;
-DoubleExpr * constantDoubleOne;
-CharExpr * constantCharNull;
-BoolExpr * constantFalse;
-BoolExpr * constantTrue;
-NullExpr * constantNull;
-String * stringUninitialized;
-String * stringGenericDestructor;
-String * stringThis;
-
-
-Quad * firstQuad;
-Quad * lastQuad;
-StringExpr * stringList;
-DoubleExpr * floatList;
-
-
-AstNode * currentMethOrFun;
-Class * currentClass;
-
-*****/
-
-
-
 // main (argc, argv)
 //
 // The compiler main.
 //
 int main (int argc, char ** argv) {
-//Expression * expr;
   Header * hdr, * newHeader;
   Uses * uses;
   String * newPackName;
@@ -180,91 +153,28 @@ int main (int argc, char ** argv) {
   int saveSafe;
   int wantProgress = 0;
 
-/*****
-  Function * function;
-  Method * meth;
-  Class * cl;
-  Function * fun;
-  Expression * exp;
-  Statement * stmtList;
-  Type * type;
-  TypeParm * templateParms;
-  int isLone = 0;
-
-
-  String *s1, *s2, *s3, *s4, *s5, *s6, *s7, *s8, *s9;
-  Decl * decl;
-*****/
-
   memoryStart = new IntConst ();
   // printf ("Starting memory address = 0x%08x\n", (int) memoryStart);
 
   errorsDetected = 0;
   tokenPosOfLastError = -1;  // FF=255, LLLL=65535, PP=255
   initKeywords ();
-
-  // Debugging: test the "Mapping" class...
-  // testMapping ();
+  checkHostCompatibility ();
 
   processCommandLine (argc, argv);
 
   initializeConstants ();
 
-//  // print various global variables and command line options.
-//  printf ("safe = %d\n", safe);
-//  printf ("commandOptionTestLexer = %d\n", commandOptionTestLexer);
-//  printf ("commandOptionTestParser = %d\n", commandOptionTestParser);
-//  if (commandPackageName == NULL) {
-//    printf ("commandPackageName = NULL\n");
-//  } else {
-//    printf ("commandPackageName = %s\n", commandPackageName);
-//  }
-//  if (commandDirectoryName == NULL) {
-//    printf ("commandDirectoryName = NULL\n");
-//  } else {
-//    printf ("commandDirectoryName = %s\n", commandDirectoryName);
-//  }
-//  if (headerFileName == NULL) {
-//    printf ("headerFileName = NULL\n");
-//  } else {
-//    printf ("headerFileName = %s\n", headerFileName);
-//  }
-//  if (codeFileName == NULL) {
-//    printf ("codeFileName = NULL\n");
-//  } else {
-//    printf ("codeFileName = %s\n", codeFileName);
-//  }
-//  if (outputFileName == NULL) {
-//    printf ("outputFileName = NULL\n");
-//  } else {
-//    printf ("outputFileName = %s\n", outputFileName);
-//  }
-
   // If -testLexer command line option present...
   if (commandOptionTestLexer) {
     printf("file-name\tline\tchar\ttoken-type\tother-info\n");
     printf("=========\t====\t====\t==========\t==========\n");
-    // initScanner ("temp1.h");
-    // testLexer ();
-    // initScanner ("temp2.h");
-    // testLexer ();
-    // initScanner ("temp3.h");
-    // testLexer ();
     if (initScanner (headerFileName) != NULL) {
       testLexer ();
     }
 
     terminateCompiler ();
   }
-
-/*****
-  printf ("INPUT FILE NAMES\n");
-  printf ("================\n");
-  for (int i=0; i<=currentInputFileIndex; i++) {
-    printf ("%d:  %s\n", i, inputFileNames [i]);
-  }
-  terminateCompiler ();
-*****/
 
   headerMapping = new Mapping<String, Header> (15, NULL);
 
@@ -313,11 +223,6 @@ int main (int argc, char ** argv) {
   // Parse the code file...
   if (initScanner (codeFileName)) {
     code = parseCode ();
-    // printf ("\n================  CODE  ================\n");
-    // printAst (6, code);
-    // pretty (code);
-    // printf ("================================\n");
-
   } else {
     code = NULL;
   }
@@ -325,7 +230,7 @@ int main (int argc, char ** argv) {
   // Parse the main header file...
   fileName = (char *)initScanner (headerFileName);
   if (fileName != NULL) {
-//    mainHeader = parseHeader (commandPackageName);
+      //mainHeader = parseHeader (commandPackageName);
     mainHeader = parseHeader ();
     headerList = mainHeader;
     headerListLast = mainHeader;
@@ -556,6 +461,7 @@ int main (int argc, char ** argv) {
 
   terminateCompiler ();
 
+  return 0;
 }
 
 
@@ -935,16 +841,11 @@ void programLogicError (const char * msg) {
 //
 void terminateCompiler () {
 
-  // fprintf (stderr,
-  //          "Estimated memory usage = %d bytes\n",
-  //          ((int) new IntConst)- ((int) memoryStart));
-
   if (errorsDetected == 0) {
     if (outputFileName != NULL) {
       fclose (outputFile);
     }
-    // fprintf (stderr, "\n**********  Normal exit  **********\n");
-    exit (0);
+    return;
   } else if (errorsDetected == 1) {
     fprintf (stderr, "\n**********  1 error detected!  **********\n");
   } else {
@@ -956,7 +857,6 @@ void terminateCompiler () {
     fclose (outputFile);
     remove (outputFileName);
   }
-  exit (1);
 }
 
  
@@ -1370,7 +1270,6 @@ void printHelp () {
 // expected.  If this is not the case, then truncateToInt() will need to
 // be changed.
 //
-/*
 void checkHostCompatibility () {
   union fourBytes {
     char chars [4];
@@ -1478,13 +1377,13 @@ void checkHostCompatibility () {
   i3 = (int) d;
   if ((i1 !=  4) ||
       (i2 != -4) ||
-      (i3 != 0x80000000)) {
+      (i3 != (int) 0x80000000)) {
     printf ("%d %d %d\n", i1, i2, i3);
     fatalError ("The host implementation of double->int casting is not what I expect.");
   }
 
 }
-*/
+
 
 // appendStrings (char *, char *, char *)
 //
@@ -1612,20 +1511,3 @@ void divide (int a, int b) {
     }
   }
 }
-
-
-
-// truncateToInt (double) --> int
-//
-// This routine is passed a double; it returns an int by truncating the arg
-// to the next integal value toward zero.  For example:
-//
-//     4.9 -->  4
-//    -4.9 --> -4
-//    9e99 -->  2,147,483,647
-//   -9e99 --> -2,147,483,648
-//
-int truncateToInt (double d) {
-  return (int) (d);
-}
-

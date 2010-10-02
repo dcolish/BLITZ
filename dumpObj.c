@@ -90,7 +90,7 @@ void fatalError (char * msg);
 **
 ** Read and print .o file.
 */
-main (int argc, char ** argv) {
+int main (int argc, char ** argv) {
     int i, lineNumber;
     int magic;
     int sawEntryLabel;
@@ -278,6 +278,8 @@ main (int argc, char ** argv) {
         fatalError ("Invalid file format - missing \"****\" separator");
       }
     }
+
+    return 0;
 }
 
 
@@ -288,7 +290,7 @@ main (int argc, char ** argv) {
 */
 void processCommandLine (int argc, char ** argv) {
   int argCount;
-  int len;
+
   for (argc--, argv++; argc > 0; argc -= argCount, argv += argCount) {
     argCount = 1;
     /* Scan the -h option */

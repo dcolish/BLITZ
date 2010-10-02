@@ -481,6 +481,7 @@ void Mapping<Key, Value> :: printOffsetToSelector (const char * title) {
   Bucket<Key, Value> * p;
   String * sel;
   Offset * off;
+
   printf ("        %s\n", title);
   // Print using the insertion order...
   for (p=firstInsertedBucket; p; p = p->nextForIterator) {
@@ -515,6 +516,7 @@ void Mapping<Key, Value> :: printSelectorToOffset () {
   Bucket<Key, Value> * p;
   String * sel;
   Offset * off;
+
   printf ("        SELECTOR-TO-OFFSET:\n");
   // Print using the insertion order...
   for (p=firstInsertedBucket; p; p = p->nextForIterator) {

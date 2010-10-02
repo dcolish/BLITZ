@@ -16,20 +16,25 @@
    Here is an example of the using this program:
 
         % hexdump < hexdump.c
-        00000000:  2F2A 2A2A  2A2A 2A2A  2A2A 2A0A  0A20 2020    /**********..   
+        00000000:  2F2A 2A2A  2A2A 2A2A  2A2A 2A0A  0A20 2020    **********..   
         00000010:  6865 7864  756D 7020  202D 2020  4861 7272    hexdump  -  Harr
         00000020:  7920 506F  7274 6572  0A0A 2020  2054 6869    y Porter..   Thi
         00000030:  7320 7072  6F67 7261  6D20 7265  6164 7320    s program reads 
         ...
-
+   dc:9-10: I edited that stuff above so there were not any comment style lines.
 **********/
 
 #include <stdio.h>
 
+void readline();
+void printline();
+void putlong(int i);
+void putbyt(int i);
+
 int row [16];
 int size;
 
-main () {
+int main () {
    int addr;
 
    /* Each execution of this loop prints a single output line. */
@@ -43,6 +48,7 @@ main () {
      readline ();
    }
 
+   return 0;
 }
 
 
@@ -51,7 +57,7 @@ main () {
               places them in the array named 'row', setting 'size' to
               be the number of bytes read in.  Size will be less than
               16 if EOF was encountered, and may possibly be 0.  */
-readline () {
+void readline () {
 int c;
   size = 0;
   c = getchar ();
@@ -67,7 +73,7 @@ int c;
 
 /* putlong - This routine is passed an integer, which it displays as 8
              hex digits.  */
-putlong (i) {
+void putlong (int i) {
   putbyt ((i>>24) & 0x000000ff);
   putbyt ((i>>16) & 0x000000ff);
   putbyt ((i>>8) & 0x000000ff);
@@ -77,7 +83,7 @@ putlong (i) {
 
 
 /* printline - This routine prints the current 'row'.  */
-printline () {
+void printline () {
   int i, c;
   if (size > 0) {
     i = 0;
@@ -113,8 +119,7 @@ printline () {
 /* putbyt - This routine is passed a byte (i.e., an integer < 256) which
           it displays as 2 hex characters.  If passed a number out of that
           range, it outputs nothing.  */
-putbyt (c)
-   int c;
+void putbyt (int c)
 {
   int i;
   if ((c >= 0) && (c <= 255)) {

@@ -231,10 +231,10 @@ void writeLabels ();
 **
 ** Read through all input files and produce the output file.
 */
-main (int argc, char ** argv) {
+int main (int argc, char ** argv) {
     FileInfo * inFile, * fileWithEntry;
     int magic, i, j, unpaddedTextSize, unpaddedDataSize;
-    int nextText, nextData, nextBss, inText;
+    int nextText, nextData, nextBss;
     char * targetAddr, *q;
     int symbolNum, value, relativeToS, len;
     TableEntry * entryPtr, * existingEntry;
@@ -675,7 +675,8 @@ main (int argc, char ** argv) {
       printf ("%d warnings were detected.\n", warningsDetected);
       printf ("%d errors were detected.\n", errorsDetected);
     }
-    exit (0);
+    
+    return 0;
 }
 
 
@@ -834,7 +835,6 @@ void writeInteger (int i) {
 */
 void processCommandLine (int argc, char ** argv) {
   int argCount;
-  int len;
   int gotLoadAddr = 0;
   int gotPageSize = 0;
   FileInfo * p, * q;
@@ -1389,7 +1389,7 @@ void printTableArray () {
 */
 TableEntry * lookup (TableEntry * givenEntry) {
   unsigned hashVal = 0, g;
-  char * p, * q;
+  char * p;
   int i;
   TableEntry * entryPtr;
 
@@ -1398,7 +1398,7 @@ TableEntry * lookup (TableEntry * givenEntry) {
         i < givenEntry->length;
         p++, i++ ) {
     hashVal = (hashVal << 4) + (*p);
-    if (g = hashVal & 0xf0000000) {
+    if ((g = hashVal) & 0xf0000000) {
       hashVal = hashVal ^ (g >> 24);
       hashVal = hashVal ^ g;
     }
@@ -1969,7 +1969,7 @@ void addLabels () {
 */
 int lookupLabel (LabelEntry * newEntry) {
   unsigned hashVal = 0, g;
-  char * p, * q;
+  char * p;
   int i;
   LabelEntry * entryPtr;
 
@@ -1978,7 +1978,7 @@ int lookupLabel (LabelEntry * newEntry) {
         i < newEntry->length;
         p++, i++ ) {
     hashVal = (hashVal << 4) + (*p);
-    if (g = hashVal & 0xf0000000) {
+    if ((g = hashVal) & 0xf0000000) {
       hashVal = hashVal ^ (g >> 24);
       hashVal = hashVal ^ g;
     }
@@ -2009,7 +2009,6 @@ int lookupLabel (LabelEntry * newEntry) {
 */
 void writeLabels () {
   int hashVal;
-  char * p;
   int i, len;
   LabelEntry * entryPtr;
   if (commandOptionS) {

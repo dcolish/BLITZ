@@ -34,7 +34,7 @@
 #include <signal.h>
 #include <math.h>
 #include <errno.h>
-
+#include <unistd.h>
 
 
 /* SWAP_BYTES (int)  -->  int
@@ -602,8 +602,7 @@ void printCurrentFileLineAndFunction ();
 **
 ** Scan the command line arguments, then enter into the command loop.
 */
-main (int argc, char ** argv) {
-  int i;
+int main (int argc, char ** argv) {
   char * command;
 
   checkHostCompatibility ();
@@ -833,6 +832,8 @@ main (int argc, char ** argv) {
       printf ("Enter a command at the prompt.  Type 'quit' to exit or 'help' for info about commands.\n");
     }
   }
+
+  return 0;
 }
 
 
@@ -1038,7 +1039,6 @@ int isNegZero (double d) {
 */
 void processCommandLine (int argc, char ** argv) {
   int argCount;
-  int len;
   int gotGOption = 0;
   int gotRawOption = 0;
   int gotWaitOption = 0;
@@ -1313,7 +1313,6 @@ void commandLineHelp () {
 ** Leading and trailing white space is removed.
 */
 char * getToken () {
-  int i;
   fflush (stdout);
   fgets (inputBuffer, sizeof(inputBuffer), stdin);
 
@@ -1959,7 +1958,6 @@ void printPendingInterrupts () {
 ** This routine prints the current state of the I/O devices.
 */
 void commandIO () {
-  int i;
   printf ("==========  Serial I/O  ==========\n");
   if (termOutputReady) {
     printf ("  Output Status:       Ready\n");
@@ -2464,11 +2462,16 @@ void commandFormat () {
     errno = 0;
     i = truncate (diskFileName, (off_t) newByteLen+4);    // off_t is "long long" in sys/types.h
     if (i == 0) {
-      printf ("    The magic number will consume 4 additional bytes.\n", newByteLen+4);
+      printf ("The magic number will consume 4 additional bytes.\n");
       printf ("File length changed to %d bytes.\n", newByteLen+4);
     } else {
+
       printf ("Problems during call to 'truncate'; Disk I/O has been disabled!\n");
-      if (errno) perror ("Error");
+
+      if (errno) {
+          perror ("Error");
+      }
+
       fclose (diskFile);
       diskFile = NULL;
       return;
@@ -2562,9 +2565,7 @@ void commandFormat () {
 */
 void printNumberNL2 (int i) {
   char str [100];
-  char c;
-  TableEntry * tableEntry;
-  int index;
+
   printf ("0x");
   putlong (i);
   sprintf (str, "%d", i);
@@ -2583,7 +2584,6 @@ void printNumberNL2 (int i) {
 */
 void printNumberNL (int i) {
   char str [100];
-  char c;
   TableEntry * tableEntry;
   int index;
   if (i == 0) {
@@ -2595,39 +2595,13 @@ void printNumberNL (int i) {
   sprintf (str, "%d", i);
   printf ("     ( decimal: ");
   printStringInWidth (str, 11);
+
   if ((i >= ' ') && (i <= '~')) {
     printf (" ascii: \'");
     putchar (i & 0x000000ff);
     printf ("\'");
   }
-/****
-  printf (" ascii: \"");
-  c = (i >> 24) & 0x000000ff;
-  if ((c>=' ') && (c <= '~')) {
-    putchar (c);
-  } else {
-    putchar ('.');
-  }
-  c = (i >> 16) & 0x000000ff;
-  if ((c>=' ') && (c <= '~')) {
-    putchar (c);
-  } else {
-    putchar ('.');
-  }
-  c = (i >> 8) & 0x000000ff;
-  if ((c>=' ') && (c <= '~')) {
-    putchar (c);
-  } else {
-    putchar ('.');
-  }
-  c = i & 0x000000ff;
-  if ((c>=' ') && (c <= '~')) {
-    putchar (c);
-  } else {
-    putchar ('.');
-  }
-  printf ("\"");
-****/
+
   index = findLabel (i);
   if (index != -1) {
     tableEntry = valueIndex [index];
@@ -3208,7 +3182,6 @@ void commandPrintPageTable () {
 */
 void commandTranslate () {
   int logicalAddr, physAddr, reading, doUpdates;
-  char * str;
   printf ("Please enter a logical address: ");
   logicalAddr = readHexInt ();
   printf ("Will this be a read-only operation (y/n)? ");
@@ -3273,7 +3246,7 @@ void commandCancel () {
 ** by the valueIndex.
 */
 void commandLabels () {
-  int i, j;
+  int i;
   TableEntry * p;
   printf ("Ordered alphabetically:\n");
   printf ("    Label                          Hex Value  (in decimal)\n");
@@ -3343,11 +3316,9 @@ void printStringInWidth (char * string, int width) {
 ** enter several new entries.
 */
 void commandInit () {
-  int j;
   char * str;
   char c, * p;
   TableEntry * tableEntry;
-  int value = 100;
 
   numberOfLabels = 0;
   while (1) {
@@ -3392,9 +3363,7 @@ void commandInit () {
 ** enter several new entries.
 */
 void commandInit2 () {
-  int j;
   char string [100];
-  char c, * p;
   TableEntry * tableEntry;
   int value;
 
@@ -3613,7 +3582,7 @@ void commandFind () {
 ** Find a label by value and print it.
 */
 void commandFind2 () {
-  int value, j, index;
+  int value, index;
   TableEntry * tableEntry;
   printf ("Enter the value to find (in hex): ");
   value = readHexInt ();
@@ -3753,7 +3722,7 @@ TableEntry * findLabelByAlpha (char * string, int low, int high) {
 ** the label table.
 */
 void commandAdd () {
-  int j;
+
   char * str;
   char c, * p;
   TableEntry * tableEntry;
@@ -3882,9 +3851,6 @@ void resetState () {
   int i, magic, len;
   char * targetAddr, * p;
   TableEntry * tableEntry;
-  char buffer [2];
-  FILE * blitzrc;
-  char * first, * second;
 
   setSimulationConstants ();
 
@@ -4188,7 +4154,7 @@ void commandFloatReg (int reg) {
 ** contents as floating point numbers.
 */
 void commandFMem () {
-  int i, count, index, implAddr, physAddr, from, to;
+  int i, count, index, implAddr, physAddr, to;
   double d;
   TableEntry * tableEntry;
 
@@ -4269,8 +4235,8 @@ void commandDis () {
 ** address.
 */
 void commandDis2 () {
-  int i, count, index;
-  TableEntry * tableEntry;
+  int i, count;
+
   count = 30;
   currentAddr = currentAddr & 0xfffffffc;
   for (i=0; i<count; i++) {
@@ -4296,7 +4262,6 @@ void commandDis2 () {
 void disassemble (int physAddr) {
   int opcode, opcode2, cat, n, index, implAddr, instr, instr2, i1, i2;
   TableEntry * tableEntry;
-  char c;
 
   char * opcodes [] = {
 
@@ -4795,7 +4760,6 @@ void printComment (int i) {
 ** There is a leading tab printed and the output is followed by a newline.
 */
 void printComment2 (int i) {
-  char c;
   int index;
 
   /* Sign extend the 16 bit number in i. */
@@ -5038,7 +5002,7 @@ void singleStep () {
      Each iteration of this loop looks at the next interrupt.  The call
      to getNextInterrupt will ignore maskable interrupts if interrupts
      are currently disabled (i.e., if statusI=0).  */
-  if (thisInterrupt = getNextInterrupt ()) {
+  if ((thisInterrupt = getNextInterrupt())) {
 
     // printf (".");
 
@@ -7026,6 +6990,7 @@ int getVectorNumber (int interruptType) {
     return 0x00000034;
   } else {
     fatalError ("PROGRAM LOGIC ERROR: Unknown exception vector");
+    return 0x00000000;
   }
 }
 
@@ -7526,6 +7491,7 @@ int getMemoryMappedWord (int physAddr) {
   } else {
     fprintf (stderr, "\n\rERROR: Attempt to access undefined address in memory-mapped area\n\r");
     controlCPressed = 1;
+    return 0x00000001;
   }
 }
 
@@ -8306,7 +8272,7 @@ void commandDecimal () {
 ** and ascii.
 */
 void commandAscii () {
-  int value;
+
   /* Read in a value. */
   printf ("Enter a single character followed by a newline/return: ");
   fflush (stdout);
@@ -8329,7 +8295,6 @@ void commandAscii () {
 ** followed by a newline.
 */
 void printHexDecimalAscii (int i) {
-  char str [100];
   char c;
   printf ("     hex: 0x");
   putlong (i);
@@ -8786,7 +8751,7 @@ void turnOffTerminal () {
 ** be coming from a file besides stdin.
 */
 char checkForInput (int waitForKeystroke) {
-  int i, j;
+  int i;
   char ch, other;
 #define TERM_BUFF_SIZE 1
   char terminalBuffer [TERM_BUFF_SIZE];
@@ -9023,7 +8988,7 @@ void initializeDisk () {
 ** and the disk status will then change.
 */
 void performDiskIO (int command) {
-  int seekTime, accessTime, futureTime, currentAngle, desiredAngle, angleChange, transferTime;
+  int accessTime, futureTime, currentAngle, desiredAngle, angleChange, transferTime;
 
   /* Make sure the DISK is working... */
   if (diskFile == NULL) {

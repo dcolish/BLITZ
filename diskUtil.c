@@ -166,7 +166,7 @@ void writeDirectory ();
 **
 ** Scan the command line arguments, then enter into the command loop.
 */
-main (int argc, char ** argv) {
+int main (int argc, char ** argv) {
   checkHostCompatibility ();
   checkArithmetic ();
   processCommandLine (argc, argv);
@@ -188,7 +188,10 @@ main (int argc, char ** argv) {
     extractCommand ();
   } else {
     fatalError ("No commands given; Use -h for help display");
+    return -1;
   }
+
+  return 0;
 }
 
 
@@ -198,8 +201,6 @@ main (int argc, char ** argv) {
 ** Initialize the BLITZ DISK file by writing out an empty directory.
 */
 void initializeCommand () {
-  long longLength;
-  int diskFileLength, diskMagic;
 
   if (commandOptionV) printf ("INITIALIZING THE FILE SYSTEM...\n");
 
@@ -1242,10 +1243,6 @@ void checkArithmetic () {
 */
 void processCommandLine (int argc, char ** argv) {
   int argCount;
-  int len;
-  int gotGOption = 0;
-  int gotRawOption = 0;
-  int gotRandOption = 0;
 
   /* Each iteration of this loop looks at the next argument.  In some
      cases (like "-o a.out") one iteration will scan two tokens. */

@@ -19,6 +19,7 @@
 **
 */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -374,7 +375,7 @@ enum { EOL=256, LABEL, ID, INTEGER, REAL, STRING, ABSOLUTE,
 **
 ** Initialize, read in the input file, perform processing, the write the .o file.
 */
-main (int argc, char ** argv) {
+int main (int argc, char ** argv) {
     int i;
     errorsDetected = 0;
     currentLine = 1;
@@ -523,7 +524,8 @@ main (int argc, char ** argv) {
         fprintf (stderr, "%d errors were detected!\n", errorsDetected);
         errorExit ();
     }
-    exit (0);
+
+    return 0;
 }
 
 
@@ -612,8 +614,7 @@ int processCommandLine (int argc, char ** argv) {
         if (commandInFileName == NULL) {
             commandOutFileName = "";
             fprintf (stderr,
-                     "Must use -o option when input is from stdin\n",
-                     commandOutFileName);
+                     "Must use -o option when input is from stdin\n");
             exit (1);
         } else {
             len = strlen (commandInFileName);
@@ -1132,7 +1133,7 @@ int getToken (void) {
     double realValue, exp, power;
     char lexError2 [] = "Illegal character xxxxxxx in string ignoredxxxxxx";
     char buffer [MAX_STR_LEN+1];          /* buffer for saving a string */
-    int next, i;                             /* index into buffer */
+    int next;                             /* index into buffer */
 
     /* If last token was EOL, then increment line number counter. */
     /* Note: if lines end with NL & CR, the line numbering will be doubled. */
@@ -1786,12 +1787,11 @@ TableEntry * lookupAndAdd2 (char * givenStr, int length, int newType) {
     int i;
     TableEntry * entryPtr;
 
-    /* Compute the hash value for the givenStr and set hashVal to it. */
-    for ( p = givenStr, i=0;
-          i < length;
-          p++, i++ ) {
+    /* Compute the hash value for the givenStr and set hashVal to it. */ 
+    for ( p = givenStr, i=0; i < length; p++, i++ ) {
         hashVal = (hashVal << 4) + (*p);
-        if (g = hashVal & 0xf0000000) {
+
+        if ((g = hashVal) & 0xf0000000) {
             hashVal = hashVal ^ (g >> 24);
             hashVal = hashVal ^ g;
         }
@@ -2921,7 +2921,6 @@ void getOneInstruction () {
     Instruction * p, * q;
     Expression * ex;
     TableEntry * tableEntry;
-    String * strPtr;
     int i, opCode, category, gotLabel, gotMinus;
     if (nextToken == EOF) {
         return;
@@ -4311,7 +4310,7 @@ int getLC () {
         return bssLC;
     default:
         printError ("Not currently in a .text, .data, or .bss segment");
-        return;
+        return -1;
     }
 }
 
@@ -5453,7 +5452,7 @@ void writeOutSymbol (TableEntry * entry) {
 */
 void writeRelocationInfo () {
     Instruction * instrPtr;
-    int i, in, relTo;
+    int i;
     currentSegment = 0;
     textLC = 0;
     dataLC = 0;

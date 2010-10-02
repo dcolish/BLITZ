@@ -19,7 +19,7 @@
 #include <stdio.h>
 
 
-main () {
+int main () {
   int lineLength = 0,
       maxLineLength = 0,
       countOfBS = 0,
@@ -73,4 +73,5 @@ main () {
   printf ("The number of DEL characters is %d\n", countOfDEL);
   printf ("The number of other non-printable characters is %d\n", countOfOther);
 
+  return 0;
 }

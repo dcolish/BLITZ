@@ -534,7 +534,7 @@ void Goto::print () {
   if (next && next->op == OPLabel) {
     lab = (Label *) this->next;
     if (lab->label == label) {
-      fprintf (outputFile, "!%s", label);   // Comment the jump out
+      fprintf (outputFile, "!");   // Comment the jump out
     }
   }
   // Else generate a "jmp" instruction...
@@ -2520,7 +2520,6 @@ void IRLoadSelfPtr (VarDecl * tname) {
 
 void Move::print () {
   char * label;
-
   fprintf (outputFile, "!   Data Move: ");
   if (targetVar) {
     printANode (targetVar);
@@ -3174,7 +3173,8 @@ void SwitchDirect::print () {
   // Make sure the expr is not < lowValue...
   fprintf (outputFile, "!   If ");
   printANode (expr);
-  fprintf (outputFile, " is < %d (==smallestCaseValue) goto default code\n", lowValue);//, highValue);
+  fprintf (outputFile, " %d is < %d (==smallestCaseValue) goto default code\n",
+           lowValue, highValue);
   fprintf (outputFile, "\tcmp\tr1,%d\n", lowValue);
   // (Overflow cannot occur since r1 and lowValue are both within -32768..32767.)
   fprintf (outputFile, "\tbl\t%s\n", defaultLabel);
