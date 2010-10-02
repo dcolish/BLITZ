@@ -56,4 +56,4 @@ kpl:	main.o lexer.o ast.o printAst.o parser.o mapping.o kplcheck.o ir.o gen.o
 	$(CXX) $(CXXFLAGS) $+ -o $@
 
 clean: 
-	rm -f *.o *.dSYM asm dumpObj lddd blitz diskUtil hexdump check endian kpl
+	rm -rf *.o *.dSYM asm dumpObj lddd blitz diskUtil hexdump check endian kpl
