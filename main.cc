@@ -1155,7 +1155,7 @@ void processCommandLine (int argc, char ** argv) {
     codeFileName = (char *) calloc (1, len + 4);
     strcpy (codeFileName, commandPackageName);
     codeFileName [len] = '.';
-    codeFileName [len+1] = 'c';
+    codeFileName [len+1] = 'k';
     codeFileName [len+2] = '\0';
   }
 
