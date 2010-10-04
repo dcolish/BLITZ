@@ -16,11 +16,12 @@
 //
 // Modifcations by:
 //   03/15/06 - Harry H. Porter III
+//   10/01/10 - Dan Colish
 //
 //
 
 #include "main.h"
-
+#include "printAst.h"
 
 
 
@@ -8937,7 +8938,6 @@ a catch stmt; we just keep going and hit other stuff in the list.
           return pType;
           
         } else {
-//qqqqqqqqq
           // This case can occur as a result of previous errors, e.g., a constant whose
           // value cannot be determined at compile-time.
           error (var, "Something is wrong with this expression; there should be another error message concerning the problem");

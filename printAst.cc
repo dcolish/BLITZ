@@ -25,8 +25,9 @@
 //     printAst (6, p);
 //
 
+#include "ast.h"
 #include "main.h"
-
+#include "printAst.h"
 
 
 #define TABAMT 2

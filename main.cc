@@ -19,8 +19,9 @@
 //
 
 #include <signal.h>  
-#include "main.h"
 
+#include "main.h"
+#include "printAst.h"
 
 
 //---------------  Global Variables  ---------------
@@ -1203,6 +1204,8 @@ void printHelp () {
 "    06/15/02 - Harry H. Porter III\n"
 "  Modifcations by:\n"
 "    03/15/06 - Harry H. Porter III\n"
+"  Modifcations by:\n"
+"    10/01/10 - Dan Colish\n"
 "\n"
 "Command Line Options\n"
 "====================\n"

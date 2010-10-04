@@ -19,99 +19,130 @@
 //
 
 
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include "mapping.h"
+#include "tokens.h"
 
-//class AstNode;              // ...
 
-  class Header;                // HEADER
-  class Code;                  // CODE
-  class Uses;                  // USES
-  class Renaming;              // RENAMING
-  class Abstract;              // ...
-    class Interface;              // INTERFACE
-    class ClassDef;               // CLASS_DEF
-  class Behavior;              // BEHAVIOR
-  class TypeDef;               // TYPE_DEF
-  class ConstDecl;             // CONST_DECL
-  class ErrorDecl;             // ERROR_DECL
-  class FunctionProto;         // FUNCTION_PROTO
-  class MethodProto;           // METHOD_PROTO
-  class MethOrFunction;        // ...
-    class Function;               // FUNCTION
-    class Method;                 // METHOD
-  class TypeParm;              // TYPE_PARM
-  class TypeArg;               // TYPE_ARG
 
-  class Type;                  // ...
-    class CharType;               // CHAR_TYPE
-    class IntType;                // INT_TYPE
-    class DoubleType;             // DOUBLE_TYPE
-    class BoolType;               // BOOL_TYPE
-    class VoidType;               // VOID_TYPE
-    class TypeOfNullType;         // TYPE_OF_NULL_TYPE
-    class AnyType;                // ANY_TYPE
-    class PtrType;                // PTR_TYPE
-    class ArrayType;              // ARRAY_TYPE
-    class RecordType;             // RECORD_TYPE
-    class FunctionType;           // FUNCTION_TYPE
-    class NamedType;              // NAMED_TYPE
+#ifndef AST_H
+#define AST_H
 
-  class Statement;             // ...
-    class IfStmt;                 // IF_STMT
-    class AssignStmt;             // ASSIGN_STMT
-    class CallStmt;               // CALL_STMT
-    class SendStmt;               // SEND_STMT
-    class WhileStmt;              // WHILE_STMT
-    class DoStmt;                 // DO_STMT
-    class BreakStmt;              // BREAK_STMT
-    class ContinueStmt;           // CONTINUE_STMT
-    class ReturnStmt;             // RETURN_STMT
-    class ForStmt;                // FOR_STMT
-    class SwitchStmt;             // SWITCH_STMT
-    class TryStmt;                // TRY_STMT
-    class ThrowStmt;              // THROW_STMT
-    class FreeStmt;               // FREE_STMT
-    class DebugStmt;              // DEBUG_STMT
+extern Token token;
 
-  class Case;                  // CASE
-  class Catch;                 // CATCH
+struct AbstractStack;
 
-  class VarDecl;               // ...
-    class Global;                 // GLOBAL
-    class Local;                  // LOCAL
-    class Parameter;              // PARAMETER
-    class ClassField;             // CLASS_FIELD
-    class RecordField;            // RECORD_FIELD
+//----------  Offset  ----------
+//
+// This data structure is used in assigning offsets to messages in
+// the dispatch tables.  There is a single linked list of these
+// structures, with values 4,8,12,16,20,...  We use these structures
+// rather than "int"s so that we may put them into Mappings.
 
-  class Expression;            // ...
+struct Offset {
+  int        ivalue;
+  Offset *   nextOffset;
+};
 
-    class Constant;               // ...
-      class IntConst;                // INT_CONST
-      class DoubleConst;             // DOUBLE_CONST
-      class CharConst;               // CHAR_CONST
-      class StringConst;             // STRING_CONST
-      class BoolConst;               // BOOL_CONST
-      class NullConst;               // NULL_CONST
 
-    class CallExpr;               // CALL_EXPR
-    class SendExpr;               // SEND_EXPR
-    class SelfExpr;               // SELF_EXPR
-    class SuperExpr;              // SUPER_EXPR
-    class FieldAccess;            // FIELD_ACCESS
-    class ArrayAccess;            // ARRAY_ACCESS
-    class Constructor;            // CONSTRUCTOR
-    class ClosureExpr;            // CLOSURE_EXPR
-    class VariableExpr;           // VARIABLE_EXPR
-    class AsPtrToExpr;            // AS_PTR_TO_EXPR
-    class AsIntegerExpr;          // AS_INTEGER_EXPR
-    class ArraySizeExpr;          // ARRAY_SIZE_EXPR
-    class IsInstanceOfExpr;       // IS_INSTANCE_OF_EXPR
-    class IsKindOfExpr;           // IS_KIND_OF_EXPR
-    class SizeOfExpr;             // SIZE_OF_EXPR
-    class DynamicCheck;           // DYNAMIC_CHECK
 
-  class Argument;              // ARGUMENT
-  class CountValue;            // COUNT_VALUE
-  class FieldInit;             // FIELD_INIT
+
+class AstNode;
+class Header;                // HEADER
+class Code;                  // CODE
+class Uses;                  // USES
+class Renaming;              // RENAMING
+class Abstract;              // ...
+class Interface;              // INTERFACE
+class ClassDef;               // CLASS_DEF
+class Behavior;              // BEHAVIOR
+class TypeDef;               // TYPE_DEF
+class ConstDecl;             // CONST_DECL
+class ErrorDecl;             // ERROR_DECL
+class FunctionProto;         // FUNCTION_PROTO
+class MethodProto;           // METHOD_PROTO
+class MethOrFunction;        // ...
+class Function;               // FUNCTION
+class Method;                 // METHOD
+class TypeParm;              // TYPE_PARM
+class TypeArg;               // TYPE_ARG
+
+class Type;                  // ...
+class CharType;               // CHAR_TYPE
+class IntType;                // INT_TYPE
+class DoubleType;             // DOUBLE_TYPE
+class BoolType;               // BOOL_TYPE
+class VoidType;               // VOID_TYPE
+class TypeOfNullType;         // TYPE_OF_NULL_TYPE
+class AnyType;                // ANY_TYPE
+class PtrType;                // PTR_TYPE
+class ArrayType;              // ARRAY_TYPE
+class RecordType;             // RECORD_TYPE
+class FunctionType;           // FUNCTION_TYPE
+class NamedType;              // NAMED_TYPE
+
+class Statement;             // ...
+class IfStmt;                 // IF_STMT
+class AssignStmt;             // ASSIGN_STMT
+class CallStmt;               // CALL_STMT
+class SendStmt;               // SEND_STMT
+class WhileStmt;              // WHILE_STMT
+class DoStmt;                 // DO_STMT
+class BreakStmt;              // BREAK_STMT
+class ContinueStmt;           // CONTINUE_STMT
+class ReturnStmt;             // RETURN_STMT
+class ForStmt;                // FOR_STMT
+class SwitchStmt;             // SWITCH_STMT
+class TryStmt;                // TRY_STMT
+class ThrowStmt;              // THROW_STMT
+class FreeStmt;               // FREE_STMT
+class DebugStmt;              // DEBUG_STMT
+
+class Case;                  // CASE
+class Catch;                 // CATCH
+
+class VarDecl;               // ...
+class Global;                 // GLOBAL
+class Local;                  // LOCAL
+class Parameter;              // PARAMETER
+class ClassField;             // CLASS_FIELD
+class RecordField;            // RECORD_FIELD
+
+class Expression;            // ...
+
+class Constant;               // ...
+class IntConst;                // INT_CONST
+class DoubleConst;             // DOUBLE_CONST
+class CharConst;               // CHAR_CONST
+class StringConst;             // STRING_CONST
+class BoolConst;               // BOOL_CONST
+class NullConst;               // NULL_CONST
+
+class CallExpr;               // CALL_EXPR
+class SendExpr;               // SEND_EXPR
+class SelfExpr;               // SELF_EXPR
+class SuperExpr;              // SUPER_EXPR
+class FieldAccess;            // FIELD_ACCESS
+class ArrayAccess;            // ARRAY_ACCESS
+class Constructor;            // CONSTRUCTOR
+class ClosureExpr;            // CLOSURE_EXPR
+class VariableExpr;           // VARIABLE_EXPR
+class AsPtrToExpr;            // AS_PTR_TO_EXPR
+class AsIntegerExpr;          // AS_INTEGER_EXPR
+class ArraySizeExpr;          // ARRAY_SIZE_EXPR
+class IsInstanceOfExpr;       // IS_INSTANCE_OF_EXPR
+class IsKindOfExpr;           // IS_KIND_OF_EXPR
+class SizeOfExpr;             // SIZE_OF_EXPR
+class DynamicCheck;           // DYNAMIC_CHECK
+
+class Argument;              // ARGUMENT
+class CountValue;            // COUNT_VALUE
+class FieldInit;             // FIELD_INIT
 
 
 
@@ -1834,3 +1865,44 @@ class FieldInit : public AstNode {
     ~ FieldInit () {}
     virtual void prettyPrint (int indent);
 };
+
+
+//----------  AbstractStack  ----------
+//
+// The algorithm which computes the dispatch table offsets of messages
+// (in the presence of multiple inheritance among interfaces) need a stack
+// of Abstracts.  The following data structure supports this.  See routines
+// "stackPush", "stackPop", "stackEmpty", ...  A stack is represented by a
+// pointer to the top element.  Each element on the stack points to the
+// element below it.
+
+struct AbstractStack {
+  Abstract *        element;
+  AbstractStack *   next;
+};
+
+
+//----------  Misc. routines in ast.cc  ----------
+
+void pretty (AstNode *);
+void pretty2 (AstNode *);
+void printStmtList (int indent, Statement * p);
+void printVarDecls (int indent, VarDecl * p);
+void printConsts (int indent, ConstDecl * p);
+void printErrorDecls (int indent, ErrorDecl * p);
+void printTypeDefs (int indent, TypeDef * p);
+void printFunctionProtos (int indent, FunctionProto * p);
+void printFunctions (int indent, Function * p);
+void printParmList (int indent, Parameter * parmList);
+void printTypeParms (int indent, TypeParm * parmList);
+void ppIndent (int indent);
+void ppLine (int indent, const char * str);
+
+/*****
+void printDeclList (Decl * declList, int indent);
+void printTemplate (TypeParm * typeParms);
+void printBinaryOp (int op);
+void printModeAndLength (int mode, int length);
+*****/
+
+#endif

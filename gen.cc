@@ -19,8 +19,9 @@
 //
 //
 
+#include "ast.h"
 #include "main.h"
-
+#include "printAst.h"
 
 // generateIR ()
 //
