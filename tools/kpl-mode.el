@@ -1,16 +1,34 @@
-;; ;; Dan Colish
-;; ;; kpl-mode provides syntax highlighting and stuff for the kpl lang
-;; ;;
+;;
+;; Dan Colish
+;; kpl-mode provides syntax highlighting and stuff for the kpl lang
+;;
 
+(defvar type-regexp
+  (regexp-opt
+   '("array" "bool" "char" "double" "enum" "int" "ptr" "record")))
+
+(defvar keyword-regexp
+      (regexp-opt
+       '("alloc" "anyType" "arraySize" "asInteger" "asPtrTo"
+         "behavior""break" "by" "case" "catch" "char" "class"
+         "code" "const" "continue" "debug" "default" "do"  "else"
+         "elseIf" "endBehavior" "endClass" "endCode" "endFor"
+         "endFunction" "endHeader" "endIf" "endInterface" "endMethod"
+         "endRecord" "endSwitch" "endTry" "endWhile" "errors"
+         "extends" "external" "false" "fields" "for" "free" "function"
+         "header" "if" "implements" "infix" "interface"
+         "isInstanceOf" "isKindOf" "messages" "method" "methods" "new"
+         "null" "of" "prefix"  "renaming" "return"
+         "returns" "self" "sizeOf" "super" "superclass" "switch" "throw"
+         "to" "true" "try" "type" "typeOfNull" "until" "uses" "var"
+         "while")))
 
 (setq myKeywords
-  '(("\\(--.*\\)" . 'font-lock-comment-face)
-    ("\\(\\<\\S +\\>\\)\\s *(" . font-lock-function-name-face)
-    ("\\(\\<\\w+\\>:\\)". 'font-lock-variable-name-face)
-    ("\\(?:array\\|bool\\|char\\|double\\|enum\\|int\\|ptr\\|record\\)"
-      . 'font-lock-type-face)
-    ("\\(a\\(?:lloc\\|nyType\\|rraySize\\|s\\(?:Integer\\|PtrTo\\)\\)\\|b\\(?:ehavior\\|reak\\|y\\)\\|c\\(?:a\\(?:se\\|tch\\)\\|har\\|lass\\|o\\(?:de\\|n\\(?:st\\|tinue\\)\\)\\)\\|d\\(?:e\\(?:bug\\|fault\\)\\|o\\)\\|e\\(?:lse\\(?:If\\)?\\|nd\\(?:Behavior\\|C\\(?:lass\\|ode\\)\\|F\\(?:or\\|unction\\)\\|Header\\|I\\(?:f\\|nterface\\)\\|Method\\|Record\\|Switch\\|Try\\|While\\)\\|rrors\\|xte\\(?:nds\\|rnal\\)\\)\\|f\\(?:alse\\|ields\\|or\\|ree\\|unction\\)\\|header\\|i\\(?:f\\|mplements\\|n\\(?:fix\\|terface\\)\\|s\\(?:\\(?:Instance\\|Kind\\)Of\\)\\)\\|me\\(?:ssages\\|thods?\\)\\|n\\(?:ew\\|ull\\)\\|of\\|prefix\\|re\\(?:naming\\|turns?\\)\\|s\\(?:elf\\|izeOf\\|uper\\(?:class\\)?\\|witch\\)\\|t\\(?:hrow\\|o\\|r\\(?:ue\\|y\\)\\|ype\\(?:OfNull\\)?\\)\\|u\\(?:ntil\\|ses\\)\\|var\\|while\\)" 
-     . 'font-lock-keyword-face)))
+      `(("\\(--.*\\)" . 'font-lock-comment-face)
+        ("\\(\\<\\S +\\>\\)\\s *(" . font-lock-function-name-face)
+        ("\\(\\<\\w+\\>:\\)". 'font-lock-variable-name-face)
+        (,type-regexp . 'font-lock-type-face)
+        (,keyword-regexp . 'font-lock-keyword-face)))
 
 (define-derived-mode kpl-mode fundamental-mode "KPL"
     "Major mode for editing kpl files."
