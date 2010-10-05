@@ -1,4 +1,3 @@
-
 ;;
 ;; Dan Colish
 ;; kpl-mode provides syntax highlighting and stuff for the kpl lang
@@ -23,50 +22,33 @@
      "until" "uses" "var" "while") 'words)
   "Regex for matching keywords in KPL")
 
-(setq myKeywords
-      `(("\\(--.*\\)" . 'font-lock-comment-face)
-        ("\\(\\<\\S +\\>\\)\\s *(" . font-lock-function-name-face)
+(defvar kpl-mode-font-lock-defaults
+      `(("-.*$" . font-lock-comment-face)
+        ("\\(\\<\\S +\\>\\)\\s (" . font-lock-function-name-face)
         ("\\(\\<\\w+\\>:\\)". 'font-lock-variable-name-face)
         (,keyword-regexp . 'font-lock-keyword-face)
-        (,type-regexp . 'font-lock-type-face)))
+        (,type-regexp . 'font-lock-type-face)
+        ))
 
-
-(defun kpl-indent-line ()
-  "Indent current line as KPL code."
-  (interactive)
-  (beginning-of-line)
-  (if (bobp)
-      (indent-line-to 0)		   ; First line is always non-indented
-    (let ((not-indented t) cur-indent)
-      (if (looking-at "^[ \t]*end_") ; If the line we are looking at is the end of a block, then decrease the indentation
-          (progn
-            (save-excursion
-              (forward-line -1)
-              (setq cur-indent (- (current-indentation) tab-width)))
-            (if (< cur-indent 0)
-                (setq cur-indent 0)))
-        (save-excursion
-          (while not-indented
-            (forward-line -1)
-            (if (looking-at "^[ \t]*end_")
-                (progn
-                  (setq cur-indent (current-indentation))
-                  (setq not-indented nil))
-              (if (looking-at "^[ \t*]\\(function\\|code\\|class\\|while\\|for\\|interface\\|until\\|try\\|behavior\\|class\\|method\\|methods\\|record\\|type\\)")
-                  (progn
-                    (setq cur-indent (+ (current-indentation) tab-width)) ; Do the actual indenting
-                    (setq not-indented nil))
-                (if (bobp)
-                    (setq not-indented nil)))))))
-      (if cur-indent
-          (indent-line-to cur-indent)
-        (indent-line-to 0))))) ; If we didn't see an indentation hint, then allow no indentation
-
+(defvar kpl-mode-syntax-table
+  (let ((st (make-syntax-table)))
+    (modify-syntax-entry ?- "< 12b" st)
+    (modify-syntax-entry ?\n "> b" st)
+    st)
+  "Syntax table for kpl-mode")
 
 (define-derived-mode kpl-mode fundamental-mode "KPL"
     "Major mode for editing kpl files."
     (kill-all-local-variables)
+    (set-syntax-table kpl-mode-syntax-table)
+    (make-local-variable 'comment-start)
+    (setq comment-start "--")
+    (make-local-variable 'comment-start-skip)
+    (setq comment-start-skip "--+[ \t]*")
+    (make-local-variable 'comment-column)
+    (make-local-variable 'parse-sexp-ignore-comments)
+    (setq parse-sexp-ignore-comments t)
     (set (make-local-variable 'indent-line-function) 'kpl-indent-line)
-    (set (make-local-variable 'font-lock-defaults) '((myKeywords))))
+    (set (make-local-variable 'font-lock-defaults) '((kpl-mode-font-lock-defaults))))
 
 (add-to-list 'auto-mode-alist '(".k\\'" . kpl-mode))
