@@ -1,6 +1,8 @@
 #ifndef TOKENS_H
 #define TOKENS_H
 
+#include <stdio.h>
+
 enum {
        // Misc token types
        ID=257, INT_CONST, DOUBLE_CONST, CHAR_CONST, STRING_CONST, OPERATOR,
@@ -145,5 +147,11 @@ struct Token {
   TokenValue value;
   int        tokenPos;
 };
+
+
+int extractLineNumber (Token token);
+int extractCharPos (Token token);
+const char * symbolName (int i);
+void printSymbol (int sym);
 
 #endif

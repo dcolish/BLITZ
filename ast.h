@@ -19,6 +19,9 @@
 //
 
 
+#ifndef AST_H
+#define AST_H
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -29,13 +32,7 @@
 #include "mapping.h"
 #include "tokens.h"
 
-
-
-#ifndef AST_H
-#define AST_H
-
 extern Token token;
-
 struct AbstractStack;
 
 //----------  Offset  ----------
@@ -49,7 +46,6 @@ struct Offset {
   int        ivalue;
   Offset *   nextOffset;
 };
-
 
 
 

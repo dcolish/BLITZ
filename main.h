@@ -31,7 +31,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "ast.h"
+
+#include "lexer.h"
+
 
 /* SWAP_BYTES (int)  -->  int
 **
@@ -65,65 +67,16 @@ void printAllData ();
 void dump (const char * message);
 void testLexer ();
 void printToken (Token token);
-void programLogicError (const char * msg);
-void terminateCompiler ();
-void fatalError (const char * msg);
-void syntaxError (const char * msg);
-void syntaxErrorWithToken (Token token, const char * msg);
-void error (AstNode * node, const char * msg);
-void error2 (AstNode * node, const char * msg);
-void doMessage (Token token, const char * prefix, const char * msg);
-void errorWithType (const char * msg, Type * type);
+
 void checkTokenSkipping (int count);
 void processCommandLine (int argc, char ** argv);
 void printHelp ();
 void checkHostCompatibility ();
-char * appendStrings (const char * str1, const char * str2, const char * str3);
-void divide (int a, int b);
-int truncateToInt (double d);
-
-
-//----------  String Table  ----------
-
-/* class String { */
-/*   public: */
-/*     String       * next;           // Link list of Strings */
-/*     int          type;             // E.g., ID or BOOL, BREAK, ... */
-/*     int          primitiveSymbol;  // 0=not a primitive; e.g., PLUS, DOUBLE_TO_INT, ... */
-/*     int          length;           // The length and characters */
-/*     char         chars []; */
-/* }; */
-
-#define MAX_STR_LEN 2000           // Strings, IDs are limited to 2000 chars.
-#define STRING_TABLE_HASH_SIZE 211 // Size of hash table for string table.
-extern String * stringTableIndex [STRING_TABLE_HASH_SIZE];
-
-
-
-/* //----------  Token  ---------- */
-
-/* union TokenValue { */
-/*   String * svalue; */
-/*   int      ivalue; */
-/*   double   rvalue; */
-/* }; */
-
-/* struct Token { */
-/*   int        type; */
-/*   TokenValue value; */
-/*   int        tokenPos; */
-/* //  char *     fileName; */
-/* //  int        lineNumber; */
-/* }; */
-
 
 
 //----------  Global Variables  ----------
 
-#define MAX_INPUT_FILES 255            /* Do not change; related to 8 bits */
 
-extern TokenValue currentTokenValue;   // Used in lexer only
-extern Token tokenMinusOne, token, token2, token3, token4, token5;
 extern int currentInputFileIndex;      // These describe the current position in the file
 extern int currentLineOfToken;         // .
 extern int currentCharPosOfToken;      // .
@@ -132,14 +85,14 @@ extern int eofCount;                   // Used to check for looping on EOF
 extern char * inputFileNames [MAX_INPUT_FILES+1];    // Array of ptrs to file names
 extern int errorsDetected;             // Count of errors detected so far
 extern int tokenPosOfLastError;        // Used to suppress extraneous syntax errors
-extern int hashVal;                    // The running hash code for this file
-extern int hashCount;                  // Used in comuting the hashVal
 extern char * commandPackageName;      // The package name, NULL = missing
 extern char * commandDirectoryName;    // The search directory name, NULL = missing
+extern TokenValue currentTokenValue;
+extern Token tokenMinusOne, token, token2, token3, token4, token5;
 extern char * headerFileName;          // The header file name, NULL = missing
 extern char * codeFileName;            // The code file name, NULL = missing
 extern char * outputFileName;          // The .s filename, NULL = missing
-extern FILE * inputFile;               // The input file, e.g., stdin
+
 extern FILE * outputFile;              // The output file, e.g., stdout
 extern int commandOptionS;             // True: print the symbol table
 extern int commandOptionP;             // True: pretty-print the AST
@@ -174,53 +127,6 @@ extern Offset * firstDispatchOffset;   // Ptr to linked list: 4,8,12,16,...
 
 #define BUFF_LEN 300
 extern char buffer [BUFF_LEN];     // Misc. use, e.g., "_Person__Constructor"
-
-// During parsing errors, tokens may be skipped in an attempt to recover
-// and continue parsing.  Do we print a message saying that tokens were
-// skipped?  This constant determines the threshhold for printing that msg.
-#define TOKEN_SKIP_COUNT 1
-
-// The compiler will automatically terminate after this many error messages
-#define MAX_NUMBER_OF_ERRORS 100
-
-
-
-//----------  Lexical Routines  ----------
-
-const char * initScanner (const char * filename);
-void scan ();
-int getToken (void);
-void lexError (const char *msg);
-void initKeywords ();
-String * lookupAndAdd (const char * givenStr, int newType);
-String * lookupAndAdd2 (const char * givenStr, int length, int newType);
-int bytesEqual (const char * p, const char * q, int length);
-void printStringTable ();
-void printString (FILE * file, String *);
-void printChar (FILE * file, int c);
-const char * symbolName (int i);
-void printSymbol (int sym);
-int hexCharToInt (char ch);
-char intToHexChar (int c);
-double raisedToThePower (int i);
-int isEscape (char c);
-int scanEscape ();
-int isOpChar (char);
-void addToHash (int i);
-void addTokenToHash (Token tok);
-int createTokenPos ();
-int extractLineNumber (Token token);
-int extractCharPos (Token token);
-char * extractFilename (Token token);
-void incrLineNumber ();
-int getNextChar ();
-void unGetChar (char ch);
-void addToInputFilenames (const char * filename);
-
-
-#include "ast.h"
-
-
 
 //---------- Global Data  ----------
 

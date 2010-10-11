@@ -20,31 +20,13 @@
 
 #include <signal.h>  
 
-#include "main.h"
-#include "printAst.h"
-
+#include "main.
 
 //---------------  Global Variables  ---------------
 
-TokenValue currentTokenValue;          // Used in lexer only
-Token tokenMinusOne, token, token2, token3, token4, token5;
-int currentInputFileIndex = -1;        // These describe the current position in the file
-int currentLineOfToken;                // .
-int currentCharPosOfToken;             // .   
-int posOfNextToken;                    // Position of the next token
-int eofCount;                          // Used to check for looping on EOF
-char * inputFileNames [MAX_INPUT_FILES+1];   // Array of ptrs to file names
-int errorsDetected;                    // Count of errors detected so far
-int tokenPosOfLastError;               // Used to suppress extraneous syntax errors
-int hashVal = 0;                       // The running hash code for this file
-int hashCount = 0;                     // Used in computing the hashVal
 char * commandPackageName = NULL;      // The package name, NULL = missing
-char * commandDirectoryName;           // The search directory name, NULL = missing
 char * headerFileName = NULL;          // The header file name, NULL = missing
 char * codeFileName = NULL;            // The code file name, NULL = missing
-char * outputFileName = NULL;          // The .s filename, NULL = missing
-FILE * inputFile;                      // The input file, e.g., stdin
-FILE * outputFile;                     // The output file, e.g., stdout
 int commandOptionS = 0;                // True: print the symbol table
 int commandOptionP = 0;                // True: pretty-print the AST
 int commandOptionAST = 0;              // True: print the full AST
@@ -66,8 +48,7 @@ ClassDef * currentClass = NULL;        // The class we are currently processing
 Header * currentHeader = NULL;         // The header we are currently processing
 int recursionCounter = 0;              // Used to detect recursive types
 IntConst * memoryStart;                // Used to compute memory usage by compiler
-IR * firstInstruction = NULL;          // List of IR instructions
-IR * lastInstruction = NULL;           // .
+
 int maxArgBytesSoFar = -1;             // Used in setting fun/meth->maxArgBytes
 DoubleConst * floatList = NULL;        // Used during code gen
 StringConst * stringList = NULL;       // Used during code gen
@@ -76,8 +57,8 @@ Offset * firstDispatchOffset = NULL;   // Ptr to linked list: 4,8,12,16,...
 
 
 
-// The String Table, for all Strings and IDs.
-String * stringTableIndex [STRING_TABLE_HASH_SIZE];
+// // The String Table, for all Strings and IDs.
+// String * stringTableIndex [STRING_TABLE_HASH_SIZE];
 
 
 char buffer [BUFF_LEN];     // Misc. use, e.g., "_Person__Constructor"
@@ -813,214 +794,6 @@ void printToken (Token token) {
 
 
 
-// programLogicError (msg)
-//
-// This routine prints the message and terminates the compiler.
-//
-void programLogicError (const char * msg) {
-  fprintf (stderr,
-"********************************************************************\n"
-"*****\n"
-"*****  PROGRAM LOGIC ERROR\n"
-"*****\n"
-"*****  It appears that this compiler contains a software bug.\n"
-"*****  I apologize for the inconvenience it causes you.\n"
-"*****\n"
-"*****  Error message: \"%s\"\n"
-"*****\n"
-"********************************************************************\n", msg);
-  errorsDetected++;
-  terminateCompiler ();
-}
-
-
-
-// terminateCompiler ()
-//
-// Print out the number of errors (if any) and terminate of the compiler.  If errors, then
-// remove the output file (if any).  If no errors, the close the output file normally.
-//
-void terminateCompiler () {
-
-  if (errorsDetected == 0) {
-    if (outputFileName != NULL) {
-      fclose (outputFile);
-    }
-    return;
-  } else if (errorsDetected == 1) {
-    fprintf (stderr, "\n**********  1 error detected!  **********\n");
-  } else {
-    fprintf (stderr, "\n**********  %d errors detected!  **********\n",
-             errorsDetected);
-  }
-
-  if (outputFileName != NULL) {
-    fclose (outputFile);
-    remove (outputFileName);
-  }
-}
-
- 
-
-// fatalError (msg)
-//
-// This routine is called to print an error message and the current line
-// number of the curent token.  It aborts the compiler.
-//
-void fatalError (const char *msg) {
-  errorsDetected++;
-  doMessage (token, "*****  FATAL ERROR", msg);
-  terminateCompiler ();
-}
-
-
-
-// error (node, msg)
-//
-// This routine is called to print an error message.  It returns; it
-// does not terminate the program after printing.  The "node" parameter
-// is used to print additional information about the position of the error.
-//
-void error (AstNode * node, const char * msg) {
-  errorsDetected++;
-  doMessage (node->tokn, "*****  ERROR", msg);
-}
-
-
-
-// error2 (node, msg)
-//
-// This routine is called to print an error message.  It returns; it
-// does not terminate the program after printing.  The "node" parameter
-// is used to print additional information about the position of the error.
-// It differs from "error()" in that it does not print "*****  ERRROR"; it is
-// used to print additional info after the initial error message.
-//
-void error2 (AstNode * node, const char * msg) {
-  // errorsDetected++;
-  doMessage (node->tokn, "            ", msg);
-}
-
-
-
-// syntaxError (msg)
-//
-// This routine is called to print a syntax error message.
-//
-// This routine returns; it does not terminate the compiler after printing.
-//
-// It uses the current token to print additional information about the
-// position of the error.
-//
-void syntaxError (const char * msg) {
-  syntaxErrorWithToken (token, msg);
-}
-
-
-
-// syntaxErrorWithToken (tok, msg)
-//
-// This routine is called to do the work of printing a syntax error message,
-// position on 'tok'.
-//
-void syntaxErrorWithToken (Token tok, const char * msg) {
-  // If the last message was on this token, then suppress this message.
-  if (tok.tokenPos != tokenPosOfLastError) {
-    errorsDetected++;
-    doMessage (tok, "*****  SYNTAX ERROR", msg);
-  }
-  tokenPosOfLastError = tok.tokenPos;
-}
-
-
-
-// doMessage (tok, prefix, msg)
-//
-// Print info about the current token and the given "msg".
-//
-void doMessage (Token tok, const char * prefix, const char * msg) {
-  fprintf (stderr, "%s:%d: %s at ",
-                     extractFilename (tok),
-                     extractLineNumber (tok),
-                     prefix);
-  switch (tok.type) {
-    case ID:
-      fprintf (stderr, "\'");
-      printString (stderr, tok.value.svalue);
-      fprintf (stderr, "\'");
-      break;
-    case STRING_CONST:
-      fprintf (stderr, "\"");
-      printString (stderr, tok.value.svalue);
-      fprintf (stderr, "\"");
-      break;
-    case CHAR_CONST:
-      fprintf (stderr, "\'");
-      printChar (stderr, tok.value.ivalue);
-      fprintf (stderr, "\'");
-      break;
-    case INT_CONST:
-      fprintf (stderr, "\'%d\'", tok.value.ivalue);
-      break;
-    case DOUBLE_CONST:
-      fprintf (stderr, "%.16g", tok.value.rvalue);
-      break;
-    case OPERATOR:
-      fprintf (stderr, "\"");
-      printString (stderr, tok.value.svalue);
-      fprintf (stderr, "\"");
-      break;
-    default:
-      fprintf (stderr, "%s", symbolName (tok.type));
-  }
-  fprintf (stderr, ": %s\n", msg);
-  fflush (stderr);
-  if (errorsDetected >= MAX_NUMBER_OF_ERRORS) {
-    fprintf (stderr, "%s:%d: *****  Too many errors - I'm giving up\n",
-                     extractFilename (tok),
-                     extractLineNumber (tok));
-    terminateCompiler ();
-  }
-}
-
-
-
-// errorWithType (msg, type)
-//
-// This routine is called to print an error message.  It returns; it does not
-// terminate the program unless we've had too many errors.
-//
-// The "type" parameter is printed after the message.  For example, if msg is
-//    "The expected type is"
-// the following might get printed:
-//    test.c:26:         The expected type is: ptr to array [*] of char
-//
-// This routine calls "resolveNamedType" so it prints out the underlying
-// type, getting rid of aliases.
-//
-void errorWithType (const char * msg, Type * type) {
-  Token tok;
-  if (type == NULL) {
-    tok.tokenPos = 0;
-  } else {
-    tok = type->tokn;
-  }
-  fprintf (stderr, "%s:%d:              %s: ",
-                     extractFilename (tok),
-                     extractLineNumber (tok),
-                     msg);
-  fpretty (type);
-  fprintf (stderr, "\n");
-  fflush (stderr);
-  // errorsDetected++;
-  // if (errorsDetected >= MAX_NUMBER_OF_ERRORS) {
-  //   fprintf (stderr, "%s:%d: *****  Too many errors - I'm giving up\n",
-  //                    extractFilename (tok),
-  //                    extractLineNumber (tok));
-  //   terminateCompiler ();
-  // }
-}
-
 
 
 // checkTokenSkipping (count)
@@ -1387,130 +1160,3 @@ void checkHostCompatibility () {
 
 }
 
-
-// appendStrings (char *, char *, char *)
-//
-// Allocate and a new char array and fill it in from the
-// characters in the strings.  Return a pointer to it.
-//
-char * appendStrings (const char * str1, const char * str2, const char * str3) {
-  int len = strlen (str1) + strlen (str2) + strlen (str3);
-  char * newStr, * to, * from ;
-  newStr = (char *) calloc (1, len+1);
-  to = newStr;
-  for (from=(char *)str1; *from != 0; to++, from++) {
-    *to = *from;
-  }
-  for (from=(char *)str2; *from != 0; to++, from++) {
-    *to = *from;
-  }
-  for (from=(char *)str3; *from != 0; to++, from++) {
-    *to = *from;
-  }
-  *to = 0;
-  return newStr;
-}
-
-
-
-// divide (a, b)
-//
-// This routine is passed two integers ("a" and "b").  It divides a by b
-// to get a quotient ("q") and remainder ("r"), such that
-//
-//       a = b*q + r
-//
-// Furthermore, the remainder follows the mathematical definition of the
-// "modulo" operator, namely that the remainder will have the same sign
-// as b and that
-//
-//       0 <= abs(r) < abs(b)
-//
-// Another way to look at this is that the quotient is the real quotient,
-// rounded down to the nearest integer.
-//
-// For example:
-//
-//       a   b     q   r     a =  b *  q +  r     a/b   rounded
-//      ==  ==    ==  ==    =================    ====   =======
-//       7   3     2   1     7 =  3 *  2 +  1     2.3      2
-//      -7   3    -3   2    -7 =  3 * -3 +  2    -2.3     -3
-//       7  -3    -3  -2     7 = -3 * -3 + -2    -2.3     -3
-//      -7  -3     2  -1    -7 = -3 *  2 + -1     2.3      2
-//
-// This routine modifies global variables "qqo" and "rem".  If b=0 it
-// sets q and r to zero and returns immediately.
-//
-// With this definition of "q" and "r", overflow can and will occur in only
-// one situation.  Assuming that we are using 32-bit signed integers, the
-// following inputs cause a problem...
-//      a = -2147483648
-//      b = -1
-// The mathematically correct answer is...
-//      q = +2147483648
-//      r = 0
-// Unfortunately, this value of q is not representable.  The underlying
-// implementation of the C operators / and % will normally fail, and will
-// quietly return the wrong answer...
-//      q = -2147483648
-//      r = 0
-// This routine will simply return these incorrect values.
-//
-// The C language does not define the / and % operators precisely, but
-// only requires that a = b*q + r be true.  This routine is designed to
-// return consistent, "correct" answers, regardless of the underlying
-// implementation of / and %.
-//
-// Typical variations in integer division are...
-//
-// (1) "r" is always non-negative.  0 <= r < abs(b)
-//     "q" will be negative when either a or b (but not both) are negative.
-//         a   b     q   r     a =  b *  q +  r
-//        ==  ==    ==  ==    =================
-//         7   3     2   1     7 =  3 *  2 +  1
-//        -7   3    -3   2    -7 =  3 * -3 +  2
-//         7  -3    -2   1     7 = -3 * -2 +  1
-//        -7  -3     3   2    -7 = -3 *  3 +  2
-//
-// (2) Real division, rounded toward zero.
-//     "q" = a/b, rounded toward zero.
-//     "q" will be negative when either a or b (but not both) are negative.
-//     The sign of "r" will be the same as the sign of "a".
-//         a   b     q   r     a =  b *  q +  r     a/b   rounded
-//        ==  ==    ==  ==    =================    ====   =======
-//         7   3     2   1     7 =  3 *  2 +  1     2.3      2
-//        -7   3    -2  -1    -7 =  3 * -2 + -1    -2.3     -2
-//         7  -3    -2   1     7 = -3 * -2 +  1    -2.3     -2
-//        -7  -3     2  -1    -7 = -3 *  2 + -1     2.3      2
-//
-// (3) Real division, rounded toward negative infinity.
-//     "q" = a/b, rounded toward negative infinity.
-//     This results in "r" being the mathematically correct "modulo".
-//     "q" will be negative when either a or b (but not both) are negative.
-//     "r" will be negative whenever "b" is negative.
-//
-// This routine implements option number (3).  It works assuming that
-// the underlying C implementation uses options (1), (2), or (3).
-//
-// Overflow cannot occur in this routine, assuming 2's complement
-// representation of integers.
-//
-void divide (int a, int b) {
-  if (b==0) {
-    quo = rem = 0;
-    return;
-  }
-  quo = a/b;
-  rem = a%b;
-  if (b>0) {
-    if (rem<0) {
-      quo--;          // Overflow iff q=MIN; but then b=1 and r=0... can't be.
-      rem = rem + b;  // r is neg, b is pos; cannot overflow.
-    }
-  } else {
-    if (rem>0) {
-      quo--;          // Overflow iff q=MIN; but then b=1 and r=0... can't be.
-      rem = rem + b;  // r is pos, b is neg; cannot overflow.
-    }
-  }
-}

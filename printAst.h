@@ -1,6 +1,8 @@
 #ifndef PRINTAST_H
 #define PRINTAST_H
 
+#include "ast.h"
+
 void printAst (int indent, AstNode *t);
 void printHeader (int indent, const char * str, AstNode * p);
 void printFooter (int indent);

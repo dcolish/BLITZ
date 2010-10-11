@@ -19,9 +19,12 @@
 //
 //
 
-#include "main.h"
+#include "ir.h"
 
 
+
+IR * firstInstruction = NULL;
+IR * lastInstruction = NULL;           // .
 
 // within16Bits (int) --> bool
 //

@@ -18,6 +18,10 @@
 //   03/15/06 - Harry H. Porter III
 //
 
+#include <ctype.h>
+#include <stdlib.h>
+
+#include "lexer.h"
 
 #define OPComment  1
 #define OPGoto     2
@@ -145,7 +149,6 @@
 #define OPIsInstanceOf      125
 #define OPZeroMemory        126
 #define OPAscii0            127
-
 
 class IRLabel;
 
