@@ -1,5 +1,5 @@
 ;;
-;; Dan Colish
+;; Dan Colish & Cory Kolbeck
 ;; kpl-mode provides syntax highlighting and stuff for the kpl lang
 ;;
 
@@ -37,6 +37,65 @@
     st)
   "Syntax table for kpl-mode")
 
+;Searchs back through the buffer for the last non-blank, non-comment
+(defun last-meaningful () 
+  (unless (bobp) (forward-line -1))
+	
+  (while (and (not (bobp)) (or (looking-at "^[ \t]*\\(--.*\\)?$"))) 
+    (forward-line -1))
+)
+
+;Searchs back through the buffer for the last non-blank, non-comment
+(defun last-nonblank () 
+  (unless (bobp) (forward-line -1))
+	
+  (while (and (not (bobp)) (or (looking-at "^[ \t]*$"))) 
+    (forward-line -1))
+)
+
+;indentation for variable declarations
+(defun var-indent ()
+  (last-meaningful)
+  (if (looking-at "^[ \t]*\\(var\\|fields\\)[ \t]*$") 
+      (+ (current-indentation) 2) 
+    (current-indentation))
+)
+
+;TODO: Fix indentation of endClass in header files
+(defun get-indent ()
+    (save-excursion
+      (beginning-of-line)
+      (let ((delta 0)) 
+	(cond 
+	 
+	 ((looking-at "^[ \t]*--.*$") ;Indent comments to the level of their parent  
+	  (progn (last-nonblank)
+		 (current-indentation)))
+
+	 ((looking-at "^[ \t]*$") 0) ;Get rid of any whitespace on blank lines
+
+	 ((looking-at "^[ \t]*[a-zA-Z_]+:.*") (var-indent)) ;Indent variable decls specially,
+
+	 (t (progn ;Indent everything else relative to the last meaningful line
+	      (if (looking-at "^[ \t]*\\(end\\|else\\).*") (setq delta (- 0 tab-width)))	      
+	      (last-meaningful)
+	      (if (looking-at "^[ \t]*[a-zA-Z_]+:.*") (setq delta (- delta 2)))
+	      
+	      (+ delta
+	       (if (looking-at "^[ \t]*\\(?:function\\|fields\\|class\\|while\\|for\\|interface\\|until\\|try\\|behavior\\|method\\|methods\\|record\\|type\\|if\\|else\\).*") 
+		   (+ (current-indentation) tab-width)
+		 (current-indentation)))))))))
+
+
+(defun kpl-indent-line ()
+  "Indent current line as KPL code."
+  (interactive)
+  (let ((ind (get-indent)))
+;    (message "ind = %d, tabwidth = %d" ind tab-width)
+    (if (< ind 0) (setq ind 0))
+    (indent-line-to ind)))
+
+
 (define-derived-mode kpl-mode fundamental-mode "KPL"
     "Major mode for editing kpl files."
     (kill-all-local-variables)
@@ -48,7 +107,7 @@
     (make-local-variable 'comment-column)
     (make-local-variable 'parse-sexp-ignore-comments)
     (setq parse-sexp-ignore-comments t)
-    (set (make-local-variable 'indent-line-function) 'indent-relative-maybe)
+    (set (make-local-variable 'indent-line-function) 'kpl-indent-line)
     (set (make-local-variable 'font-lock-defaults) '((kpl-mode-font-lock-defaults))))
 
 (add-to-list 'auto-mode-alist '(".k\\'" . kpl-mode))
