@@ -45,7 +45,7 @@
     (forward-line -1))
 )
 
-;Searchs back through the buffer for the last non-blank, non-comment
+;Searchs back through the buffer for the last non-blank
 (defun last-nonblank () 
   (unless (bobp) (forward-line -1))
 	
