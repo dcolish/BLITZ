@@ -48,7 +48,7 @@
     (make-local-variable 'comment-column)
     (make-local-variable 'parse-sexp-ignore-comments)
     (setq parse-sexp-ignore-comments t)
-    (set (make-local-variable 'indent-line-function) 'kpl-indent-line)
+    (set (make-local-variable 'indent-line-function) 'indent-relative-maybe)
     (set (make-local-variable 'font-lock-defaults) '((kpl-mode-font-lock-defaults))))
 
 (add-to-list 'auto-mode-alist '(".k\\'" . kpl-mode))
