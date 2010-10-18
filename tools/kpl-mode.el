@@ -37,29 +37,24 @@
     st)
   "Syntax table for kpl-mode")
 
-;Searchs back through the buffer for the last non-blank, non-comment
+;; Searches back through the buffer for the last non-blank, non-comment
 (defun last-meaningful () 
   (unless (bobp) (forward-line -1))
-	
   (while (and (not (bobp)) (or (looking-at "^[ \t]*\\(--.*\\)?$"))) 
-    (forward-line -1))
-)
+    (forward-line -1)))
 
-;Searchs back through the buffer for the last non-blank
+;; Searches back through the buffer for the last non-blank
 (defun last-nonblank () 
   (unless (bobp) (forward-line -1))
-	
   (while (and (not (bobp)) (or (looking-at "^[ \t]*$"))) 
-    (forward-line -1))
-)
+    (forward-line -1)))
 
-;indentation for variable declarations
+;; Indentation rule for variable declarations
 (defun var-indent ()
   (last-meaningful)
   (if (looking-at "^[ \t]*\\(var\\|fields\\)[ \t]*$") 
       (+ (current-indentation) 2) 
-    (current-indentation))
-)
+    (current-indentation)))
 
 (defun case-indent () 
   (if (re-search-backward "^[ \t]*switch[ \t]" nil t) 
@@ -68,29 +63,31 @@
       (message "No 'switch' found for 'case' statement") 
       (current-indentation))))
 
-;TODO: Fix indentation of endClass in header files
+;; TODO: Fix indentation of endClass in header files
 (defun get-indent ()
     (save-excursion
       (beginning-of-line)
       (let ((delta 0)) 
 	(cond 
-	 
-	 ((looking-at "^[ \t]*--.*$") ;Indent comments to the level of their parent  
+
+         ;; Indent comments to the level of their parent  
+	 ((looking-at "^[ \t]*--.*$") 
 	  (progn (last-nonblank)
 		 (current-indentation)))
 
-;I found this annoying, YMMV
-;	 ((looking-at "^[ \t]*$") 0) ;Get rid of any whitespace on blank lines
+         ;; I found this annoying, YMMV - c.k.
+         ;; Get rid of any whitespace on blank lines
+         ;; ((looking-at "^[ \t]*$") 0) 
 
-	 ((looking-at "^[ \t]*[a-zA-Z0-9_]+:.*") (var-indent)) ;Indent variable decls specially,
-	 
+         ;; Indent variable declarations
+	 ((looking-at "^[ \t]*[a-zA-Z0-9_]+:.*") (var-indent)) 
+         ;; Indent case statements
 	 ((looking-at "^[ \t]*case .*:") (case-indent))
-	 
-	 (t (progn ;Indent everything else relative to the last meaningful line
+         ;; Indent everything else relative to the last meaningful line
+	 (t (progn 
 	      (if (looking-at "^[ \t]*\\(end\\|else\\).*") (setq delta (- 0 tab-width)))	      
 	      (last-meaningful)
 	      (if (looking-at "^[ \t]*[a-zA-Z_]+:.*") (setq delta (- delta 2)))
-	      
 	      (+ delta
 	       (if (looking-at "^[ \t]*\\(?:function\\|fields\\|class\\|while\\|for\\|interface\\|until\\|try\\|behavior\\|method\\|methods\\|record\\|type\\|if\\|else\\|case\\).*") 
 		   (+ (current-indentation) tab-width)
@@ -101,7 +98,7 @@
   "Indent current line as KPL code."
   (interactive)
   (let ((ind (get-indent)))
-;    (message "ind = %d, tabwidth = %d" ind tab-width)
+    ;; (message "ind = %d, tabwidth = %d" ind tab-width)
     (if (< ind 0) (setq ind 0))
     (indent-line-to ind)))
 
