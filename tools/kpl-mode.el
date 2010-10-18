@@ -72,7 +72,8 @@
 	  (progn (last-nonblank)
 		 (current-indentation)))
 
-	 ((looking-at "^[ \t]*$") 0) ;Get rid of any whitespace on blank lines
+;I found this annoying, YMMV
+;	 ((looking-at "^[ \t]*$") 0) ;Get rid of any whitespace on blank lines
 
 	 ((looking-at "^[ \t]*[a-zA-Z_]+:.*") (var-indent)) ;Indent variable decls specially,
 
