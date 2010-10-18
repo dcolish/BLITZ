@@ -61,6 +61,13 @@
     (current-indentation))
 )
 
+(defun case-indent () 
+  (if (re-search-backward "^[ \t]*switch[ \t]" nil t) 
+      (current-indentation)
+    (progn 
+      (message "No 'switch' found for 'case' statement") 
+      (current-indentation))))
+
 ;TODO: Fix indentation of endClass in header files
 (defun get-indent ()
     (save-excursion
@@ -75,15 +82,17 @@
 ;I found this annoying, YMMV
 ;	 ((looking-at "^[ \t]*$") 0) ;Get rid of any whitespace on blank lines
 
-	 ((looking-at "^[ \t]*[a-zA-Z_]+:.*") (var-indent)) ;Indent variable decls specially,
-
+	 ((looking-at "^[ \t]*[a-zA-Z0-9_]+:.*") (var-indent)) ;Indent variable decls specially,
+	 
+	 ((looking-at "^[ \t]*case .*:") (case-indent))
+	 
 	 (t (progn ;Indent everything else relative to the last meaningful line
 	      (if (looking-at "^[ \t]*\\(end\\|else\\).*") (setq delta (- 0 tab-width)))	      
 	      (last-meaningful)
 	      (if (looking-at "^[ \t]*[a-zA-Z_]+:.*") (setq delta (- delta 2)))
 	      
 	      (+ delta
-	       (if (looking-at "^[ \t]*\\(?:function\\|fields\\|class\\|while\\|for\\|interface\\|until\\|try\\|behavior\\|method\\|methods\\|record\\|type\\|if\\|else\\).*") 
+	       (if (looking-at "^[ \t]*\\(?:function\\|fields\\|class\\|while\\|for\\|interface\\|until\\|try\\|behavior\\|method\\|methods\\|record\\|type\\|if\\|else\\|case\\).*") 
 		   (+ (current-indentation) tab-width)
 		 (current-indentation)))))))))
 
