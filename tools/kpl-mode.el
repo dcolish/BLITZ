@@ -37,6 +37,13 @@
     st)
   "Syntax table for kpl-mode")
 
+(defvar block-starter-regexp
+  (concat "^[ \t]*" 
+	  (regexp-opt '("function" "fields" "class" "while" "for" "interface"
+			"until" "try" "behavior" "method" "methods" "record"
+			"type" "if" "else" "case"))))
+
+
 ;; Searches back through the buffer for the last non-blank, non-comment
 (defun last-meaningful () 
   (unless (bobp) (forward-line -1))
@@ -97,18 +104,16 @@
 	      (last-meaningful)
 	      (if (looking-at "^[ \t]*[a-zA-Z_]+:.*") (setq delta (- delta 2)))
 	      (+ delta
-	       (if (looking-at "^[ \t]*\\(?:function\\|fields\\|class\\|while\\|for\\|interface\\|until\\|try\\|behavior\\|method\\|methods\\|record\\|type\\|if\\|else\\|case\\).*") 
+	       (if (looking-at block-starter-regexp) 
 		   (+ (current-indentation) tab-width)
 		 (current-indentation)))))))))
+
 
 
 (defun kpl-indent-line ()
   "Indent current line as KPL code."
   (interactive)
-  (let ((ind (get-indent)))
-    ;; (message "ind = %d, tabwidth = %d" ind tab-width)
-    (if (< ind 0) (setq ind 0))
-    (indent-line-to ind)))
+  (indent-line-to (max 0 (get-indent))))
 
 
 (define-derived-mode kpl-mode fundamental-mode "KPL"
@@ -126,3 +131,4 @@
     (set (make-local-variable 'font-lock-defaults) '((kpl-mode-font-lock-defaults))))
 
 (add-to-list 'auto-mode-alist '(".k\\'" . kpl-mode))
+
