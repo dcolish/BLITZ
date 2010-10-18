@@ -52,18 +52,23 @@
 ;; Indentation rule for variable declarations
 (defun var-indent ()
   (last-meaningful)
-  (if (looking-at "^[ \t]*\\(var\\|fields\\)[ \t]*$") 
+  (if (looking-at "^[ \t]*\\(var\\|fields\\)") 
       (+ (current-indentation) 2) 
     (current-indentation)))
 
-(defun case-indent () 
-  (if (re-search-backward "^[ \t]*switch[ \t]" nil t) 
-      (current-indentation)
-    (progn 
-      (message "No 'switch' found for 'case' statement") 
-      (current-indentation))))
+;; Search for the parent of a line, and return its indentation
+(defun search-indent (target terminator) 
+  (unless (and (stringp target) (stringp terminator)) (current-indentation))
+  (let ((stack 1) ;; stack tracks any sub-blocks we may encounter
+	(targ-regex (concat "^[ \t]*" target "\\([^a-zA-Z]\\|$\\)")) 
+	(term-regex (concat "^[ \t]*" terminator)))
+    (while (/= stack 0) ;; Search backward until the stack is empty
+      (forward-line -1)
+      (cond
+       ((looking-at targ-regex)(setq stack (1- stack)))
+       ((looking-at term-regex)(setq stack (1+ stack))))))
+  (current-indentation))
 
-;; TODO: Fix indentation of endClass in header files
 (defun get-indent ()
     (save-excursion
       (beginning-of-line)
@@ -82,10 +87,13 @@
          ;; Indent variable declarations
 	 ((looking-at "^[ \t]*[a-zA-Z0-9_]+:.*") (var-indent)) 
          ;; Indent case statements
-	 ((looking-at "^[ \t]*case .*:") (case-indent))
+	 ((looking-at "^[ \t]*case .*:") (search-indent "switch" "endSwitch"))
+	 ;; Indent block terminators by finding the start of block
+	 ((looking-at "^[ \t]*\\(end\\([a-zA-Z]*\\)\\)") (search-indent (downcase (match-string 2)) (match-string 1)))	      
+	 ;; Indent else by finding matching if
+	 ((looking-at "^[ \t]*else") (search-indent "if" "endIf"))	      
          ;; Indent everything else relative to the last meaningful line
 	 (t (progn 
-	      (if (looking-at "^[ \t]*\\(end\\|else\\).*") (setq delta (- 0 tab-width)))	      
 	      (last-meaningful)
 	      (if (looking-at "^[ \t]*[a-zA-Z_]+:.*") (setq delta (- delta 2)))
 	      (+ delta
