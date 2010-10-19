@@ -23,9 +23,9 @@
   "Regex for matching keywords in KPL")
 
 (defvar kpl-mode-font-lock-defaults
-      `(("-.*$" . font-lock-comment-face)
-        ("\\(\\<\\S +\\>\\)\\s (" . font-lock-function-name-face)
-        ("\\(\\<\\w+\\>:\\)". 'font-lock-variable-name-face)
+      `(("--.*$" . font-lock-comment-face)
+        ("\\(\\<\\S +\\>\\)\\s (" 1 font-lock-function-name-face)
+        ("\\(\\<\\(?:\\w, \\)*\\w\\>\\):". 'font-lock-variable-name-face)
         (,keyword-regexp . 'font-lock-keyword-face)
         (,type-regexp . 'font-lock-type-face)
         ))
@@ -82,24 +82,24 @@
       (let ((delta 0)) 
 	(cond 
 
-         ;; Indent comments to the level of their parent  
+	 ;; Indent comments to the level of their parent  
 	 ((looking-at "^[ \t]*--.*$") 
 	  (progn (last-nonblank)
 		 (current-indentation)))
 
-         ;; I found this annoying, YMMV - c.k.
-         ;; Get rid of any whitespace on blank lines
-         ;; ((looking-at "^[ \t]*$") 0) 
+	 ;; I found this annoying, YMMV - c.k.
+	 ;; Get rid of any whitespace on blank lines
+	 ;; ((looking-at "^[ \t]*$") 0) 
 
-         ;; Indent variable declarations
+	 ;; Indent case statements
+	 ((looking-at "^[ \t]*case .*:") (search-indent "switch" "endSwitch")) ;; TODO - fix regex
+	 ;; Indent variable declarations
 	 ((looking-at "^[ \t]*[a-zA-Z0-9_]+:.*") (var-indent)) 
-         ;; Indent case statements
-	 ((looking-at "^[ \t]*case .*:") (search-indent "switch" "endSwitch"))
 	 ;; Indent block terminators by finding the start of block
 	 ((looking-at "^[ \t]*\\(end\\([a-zA-Z]*\\)\\)") (search-indent (downcase (match-string 2)) (match-string 1)))	      
 	 ;; Indent else by finding matching if
 	 ((looking-at "^[ \t]*else") (search-indent "if" "endIf"))	      
-         ;; Indent everything else relative to the last meaningful line
+	 ;; Indent everything else relative to the last meaningful line
 	 (t (progn 
 	      (last-meaningful)
 	      (if (looking-at "^[ \t]*[a-zA-Z_]+:.*") (setq delta (- delta 2)))
