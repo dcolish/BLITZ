@@ -25,7 +25,7 @@
 (defvar kpl-mode-font-lock-defaults
       `(("--.*$" . font-lock-comment-face)
         ("\\(\\<\\S +\\>\\)\\s (" 1 font-lock-function-name-face)
-        ("\\(\\<\\(?:\\w, \\)*\\w\\>\\):". 'font-lock-variable-name-face)
+        ("\\(\\(?:\\w+, \\)*\\w+\\):". 'font-lock-variable-name-face)
         (,keyword-regexp . 'font-lock-keyword-face)
         (,type-regexp . 'font-lock-type-face)
         ))
